@@ -42,7 +42,6 @@ typedef struct	s_mapdata
 	char		display_interlace;
 	char		anti_alias;
 	char		draw_stats;
-	char		last_key;
 	t_arraylist	*arr;
 	t_matrix	*rot_matrix;
 	t_windata	*window;
