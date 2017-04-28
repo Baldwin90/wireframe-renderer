@@ -13,6 +13,7 @@
 #include <libft.h>
 #include <fdf.h>
 #include <math.h>
+#include <mlx.h>
 
 t_mapdata		*data_create(int color)
 {
@@ -34,6 +35,23 @@ t_mapdata		*data_create(int color)
 	return (data);
 }
 
+void		window_free(t_windata *w) {
+	mlx_destroy_image(w->mlx, w->img);
+	mlx_destroy_window(w->mlx, w->win);
+	free(w);
+}
+
+void		data_free(t_mapdata *data) {
+	for (int i = 0; i < data->arr->size; i++) {
+		matrix_free( ((t_point *)data->arr->data[i])->matrix_3d );
+		free(data->arr->data[i]);
+	}
+	arraylist_free(data->arr);
+	matrix_free(data->rot_matrix);
+	window_free(data->window);
+	free(data);
+}
+
 void		data_update_rotation(t_mapdata *data)
 {
 	t_matrix *x;
@@ -53,6 +71,10 @@ void		data_update_rotation(t_mapdata *data)
 	z = matrix_create(3, 3, (double[]){cos(gamma), sin(gamma), 0}, (double[]){-sin(gamma), cos(gamma), 0}, (double[]){0, 0, 1});
 
 	cache = matrix_dotproduct(x, y);
+	if (data->rot_matrix) {
+		matrix_free(data->rot_matrix);
+		data->rot_matrix = 0;
+	}
 	data->rot_matrix = matrix_dotproduct(cache, z);
 	matrix_free(x);
 	matrix_free(y);

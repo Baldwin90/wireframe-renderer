@@ -49,6 +49,7 @@ typedef struct	s_mapdata
 
 #define D t_mapdata
 
+void			data_free(t_mapdata *data);
 float			lerp_angle(float a, float b, float t);
 float			lerp(float a, float b, float t);
 void			HSBLerp(float a[], float b[], float t, float *vals);

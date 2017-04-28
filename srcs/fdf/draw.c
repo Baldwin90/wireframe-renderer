@@ -14,7 +14,7 @@
 #include <fdf.h>
 #include <mlx.h>
 
-#define FREE_CACHE for(int i=0;i<10;i++){if(!cache[i])free(cache[i]);cache[i]=0;}
+#define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
 
 char	*ft_ftoa(float f)
 {

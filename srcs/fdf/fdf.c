@@ -17,8 +17,10 @@
 
 int key_hook(int key_code, t_mapdata *data)
 {
-	if (key_code == 53)
+	if (key_code == 53) {
+		data_free(data);
 		exit(1);
+	}
 	if (key_code == 126)
 		data_set_value(data, &(data->alpha), data->alpha + data->increment);
 	if (key_code == 125)
@@ -105,7 +107,13 @@ int main(int argc, char const *argv[])
 {
 	(void)argc;
 	(void)argv;
-	
+
+	// t_matrix *x = matrix_create(3, 3, (double []){1, 2, 3}, (double []){4,5,6}, (double []){7,8,9});
+	// t_matrix *y = matrix_create(3, 3, (double []){10, 11, 12}, (double []){13,14,15}, (double []){16,17,18});
+	// t_matrix *z = matrix_dotproduct(x, y);
+	// matrix_free(x);
+	// matrix_free(y);
+	// matrix_free(z);
 	t_mapdata *data = data_create(0x141116);
 	map_fill(data);
 

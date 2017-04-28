@@ -21,14 +21,15 @@ all: $(NAME)
 
 clean:
 		make -C ./srcs/libft/ clean
+		make -C ./srcs/mlx/ clean
 		rm -rf build/
 
 fclean: clean
 		make -C ./srcs/libft/ fclean
+		make -C ./srcs/mlx/ clean
 		rm -rf $(NAME)
 
 re: fclean all
-		make -C ./srcs/libft/ re
 
 build:
 		mkdir build/
