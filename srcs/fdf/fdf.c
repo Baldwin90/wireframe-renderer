@@ -14,6 +14,10 @@
 #include <fdf.h>
 #include <mlx.h>
 #include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 int		key_hook(int key_code, t_mapdata *data) {
 	if (key_code == 53) {
@@ -89,23 +93,24 @@ void	create_mlx(t_mapdata *data) {
 	mlx_key_hook(data->window->win, &key_hook, data);
 }
 
-int		create_point(t_mapdata *data, char **fields, int z) {
-	int	point_data_count;
-	int	rgb_val;
+int		create_point(t_mapdata *data, char **fields, int field_count, int z) {
+	char	**point;
+	int		point_data_count;
+	int		rgb_val;
 
-	for (int x = 0; i < field_count; x += 1) {
+	for (int x = 0; x < field_count; x += 1) {
 		point = ft_strsplit(fields[x], ',');
-		point_data_count = ft_arrsize(point, *point);
+		point_data_count = ft_arrsize(point, sizeof(*point));
 		switch (point_data_count) {
 			case 1:
 				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, (float[]){0, 0, 1});
 				break;
 			case 2:
-				if (rgb_val = ft_htoi(point[1]) == -1 || rgb_val > RGB_MAX) {
+				if ((rgb_val = ft_htoi(point[1])) == -1 || rgb_val > RGB_MAX) {
 					// ERROR, RGB value is not valid
 					return (FALSE);
 				}
-				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, RBGToHSB(rgb_val));
+				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, RBGToHSB(rgb_val)); // I DON'T KNOW HOW TO USE THE LAST FUNCTION
 				break;
 			default:
 				// ERROR, too many arguments in the point's data
@@ -134,16 +139,16 @@ void	map_fill(t_mapdata *data, int fd) {
 		// }
 		if (data->x_size < 0) {
 			data->x_size = field_count;
-		} else if (field_count != x_size) {
+		} else if (field_count != data->x_size) {
 			// ERROR, not all rows are the same length or they are zero
-			fdf_error(2, line, fd, data);
+			fdf_error(3, line, fd, data);
 		} else if (field_count == 0) {
 			// ERROR, a row has no points
-			fdf_error(3, line, fd, data);
-		}
-		if (!create_point(data, fields, z)) {
-			// ERROR, issue creating point
 			fdf_error(4, line, fd, data);
+		}
+		if (!create_point(data, fields, field_count, z)) {
+			// ERROR, issue creating point
+			fdf_error(5, line, fd, data);
 		}
 	}
 	if (line != NULL)
@@ -196,14 +201,4 @@ int		main(int argc, char const *argv[]) {
 
 	mlx_loop(data->window->mlx);
 	return (0);
-}
-
-// for reference
-fd = open(argv[1], O_RDONLY);
-if (fd == -1) {
-	// ERROR, issue opening file
-	li_error(4, rd, NULL, NULL);
-}
-if (close(fd) == -1) {
-	li_error(1000 , rd, NULL, NULL);
 }

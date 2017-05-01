@@ -66,7 +66,7 @@ void			mem_swap(void *a, void *b, size_t size);
 void			draw_fdf(t_mapdata *data);
 int 			key_hook(int key_code, t_mapdata *data);
 void			create_mlx(t_mapdata *data);
-void			map_fill(t_mapdata *data);
+void			map_fill(t_mapdata *data, int fd);
 t_mapdata		*data_create(int color);
 void			data_update_rotation(t_mapdata *data);
 void			data_addpoint(t_mapdata *data, float coords[], float hsb[]);
@@ -77,6 +77,8 @@ t_matrix		*matrix_create(int x, int y, ...);
 t_matrix		*matrix_create_empty(int x, int y);
 t_matrix		*matrix_dotproduct(t_matrix *a, t_matrix *b);
 void			matrix_free(t_matrix *m);
+void			fdf_error(int fdf_err_num, char *line, int fd, t_mapdata *data);
+int				create_point(t_mapdata *data, char **fields, int field_count, int z);
 
 #undef D
 
