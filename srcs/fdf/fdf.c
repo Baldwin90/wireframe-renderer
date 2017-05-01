@@ -99,10 +99,12 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z) {
 	int		rgb_val;
 
 	for (int x = 0; x < field_count; x += 1) {
+		printf("line 102\n");
 		point = ft_strsplit(fields[x], ',');
 		point_data_count = ft_arrsize(point, sizeof(*point));
 		switch (point_data_count) {
 			case 1:
+				printf("x: %i, y: %i, z: %i\n", x, ft_atoi(point[0]), z); // DELETE
 				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, (float[]){0, 0, 1});
 				break;
 			case 2:
@@ -110,7 +112,9 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z) {
 					// ERROR, RGB value is not valid
 					return (FALSE);
 				}
-				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, RBGToHSB(rgb_val)); // I DON'T KNOW HOW TO USE THE LAST FUNCTION
+				printf("x: %i, y: %i, z: %i, RGB: %s, RGB int: %i\n", x, ft_atoi(point[0]), z, point[1], rgb_val); // DELETE
+				// data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, RBGToHSB(rgb_val)); // I DON'T KNOW HOW TO USE THE LAST FUNCTION
+				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, (float[]){0, 0, 1}); // PLACEHOLDER LINE
 				break;
 			default:
 				// ERROR, too many arguments in the point's data
@@ -131,7 +135,15 @@ void	map_fill(t_mapdata *data, int fd) {
 	char	**fields;
 	int		field_count;
 
-	for (int z = 0; (gnl_res = get_next_line(fd, &line)) == 1; z += 1) {
+	printf("line 138\n");
+	line = NULL;
+	// YOU HAVE TO FREE THE FIELDS AND THE POINT DATA!!!!!!!
+	gnl_res = get_next_line(fd, &line);
+	printf("LINE %s\n", line);
+	printf("gnl_res %i\n", gnl_res);
+	for (int z = 0; gnl_res == 1; z += 1, gnl_res = get_next_line(fd, &line)) {
+		printf("%s\n", line);
+		printf("line 143\n");
 		fields = ft_strsplit(line, ' ');
 		field_count = ft_arrsize(fields, sizeof(*fields)); // replaces for loop... maybe
 		// for (field_count = 0; fields[field_count] != NULL; field_count += 1) {
@@ -169,7 +181,10 @@ void	fdf_error(int fdf_err_num, char *line, int fd, t_mapdata *data) {
 			fdf_error(fdf_err_num + 1000, NULL, -1, data);
 		}
 	}
-	data_free(data);
+	if (data != NULL) {
+		data_free(data);
+	}
+	printf("error number %i\n", fdf_err_num);
 	exit(fdf_err_num);
 }
 
@@ -186,19 +201,22 @@ int		main(int argc, char const *argv[]) {
 	int fd;
 
 	if (argc != 2) {
-		// ERROR
+		// ERROR, incorrect number of arguments
+		fdf_error(1, NULL, -1, NULL);
 	}
-	fd = open(argv[1], O_RDONLY);
-	if (fd == -1) {
-		// ERROR
+	printf("file name is %s\n", argv[1]);
+	if ((fd = open(argv[1], O_RDONLY)) == -1) {
+		// ERROR, unable to open file
+		fdf_error(2, NULL, -1, NULL);
 	}
+	printf("fd is %i\n", fd);
 	t_mapdata *data = data_create(0x141116);
+	if (close(fd) == -1) {
+		fdf_error(1000, NULL, -1, data);
+	}
 	map_fill(data, fd);
-
 	create_mlx(data);
-
 	draw_fdf(data);
-
 	mlx_loop(data->window->mlx);
 	return (0);
 }
