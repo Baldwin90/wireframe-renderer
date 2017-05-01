@@ -36,8 +36,10 @@ t_mapdata		*data_create(int color)
 }
 
 void		window_free(t_windata *w) {
-	mlx_destroy_image(w->mlx, w->img);
-	mlx_destroy_window(w->mlx, w->win);
+	if (w->mlx) {
+		mlx_destroy_image(w->mlx, w->img);
+		mlx_destroy_window(w->mlx, w->win);
+	}
 	free(w);
 }
 

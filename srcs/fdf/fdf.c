@@ -93,6 +93,10 @@ void	create_mlx(t_mapdata *data)
 	mlx_key_hook(data->window->win, &key_hook, data);
 }
 
+// if it's white data_addpoint(data, (float[]){x, y, z}, (float[]){0, 0, 1});
+
+// if it has color data_addpoint(data, (float[]){x, y, z}, RBGToHSB(color));
+
 //YOUR JOB :3
 void map_fill(t_mapdata *data)
 {
@@ -101,6 +105,9 @@ void map_fill(t_mapdata *data)
 	for (int i = 0; i < 209; i++) {
 		data_addpoint(data, (float []){(int)(i % data->x_size), arr[i], (int)(i / data->x_size)}, (float []){(float)i / 209, 1, 1});
 	}
+
+	(float []){1, 2, 3}
+
 }
 
 int main(int argc, char const *argv[])
