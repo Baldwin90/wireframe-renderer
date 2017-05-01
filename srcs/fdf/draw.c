@@ -84,7 +84,7 @@ void	draw_pixel(t_windata *data, int x, int y, int color)
 	*((int *)(data->pixel + ((x + y * SCREENSIZE) * data->bpp))) = color;
 }
 
-void	draw_line(t_mapdata *data, double a[], double b[], float color_a[], float color_b[])
+void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float color_b[])
 {
 	float hsbvals[3];
 
@@ -95,22 +95,22 @@ void	draw_line(t_mapdata *data, double a[], double b[], float color_a[], float c
 		mem_swap(b, b + 1, sizeof(*a));
 	}
 	if (a[0] > b[0]) {
-		mem_swap(a, b, 2 * sizeof(double));
+		mem_swap(a, b, 2 * sizeof(float));
 		did_swap = 1;
 	}
-	double dx = (b[0] - a[0]) * SCREENSIZE;
-	double dy = ABS((b[1] - a[1])) * SCREENSIZE;
-	double gradient = dy / dx * (a[1] < b[1] ? 1 : -1);
-	double y = (a[1] * SCREENSIZE);
+	float dx = (b[0] - a[0]) * SCREENSIZE;
+	float dy = ABS((b[1] - a[1])) * SCREENSIZE;
+	float gradient = dy / dx * (a[1] < b[1] ? 1 : -1);
+	float y = (a[1] * SCREENSIZE);
 
 	int max_x = (int)(b[0] * SCREENSIZE);
 	int start = (int)(a[0] * SCREENSIZE);
 
 	for (int x = start; x < max_x; x++) {
 		if (did_swap) {
-			HSBLerp(color_b, color_a, (double)(x - start) / (double) (max_x - start - 1), &(hsbvals[0]));
+			HSBLerp(color_b, color_a, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
 		} else {
-			HSBLerp(color_a, color_b, (double)(x - start) / (double) (max_x - start - 1), &(hsbvals[0]));
+			HSBLerp(color_a, color_b, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
 		}
 		float b_cache = hsbvals[2];
 		int color;
@@ -159,7 +159,7 @@ void	mem_swap(void *a, void *b, size_t size)
 
 void draw_fdf(t_mapdata *data)
 {
-	double x_min=2147483647, x_max=-2147483648, y_min=2147483647, y_max=-2147483648;
+	float x_min=2147483647, x_max=-2147483648, y_min=2147483647, y_max=-2147483648;
 	t_point *point;
 	t_arraylist *arr = data->arr;
 	for (int idx = 0; idx < arr->size; idx++) {
@@ -177,29 +177,29 @@ void draw_fdf(t_mapdata *data)
 			y_min = point->screen_y;
 		}
 	}
-	double x_scale = 1 / (x_max - x_min) * 0.95;
-	double y_scale = (1 / (y_max - y_min)) * 0.95;
-	double scale = MIN(x_scale,y_scale);
+	float x_scale = 1 / (x_max - x_min) * 0.95;
+	float y_scale = (1 / (y_max - y_min)) * 0.95;
+	float scale = MIN(x_scale,y_scale);
 
-	double x_offset = (1 - ((x_max - x_min) * scale)) * 0.5;
-	double y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
+	float x_offset = (1 - ((x_max - x_min) * scale)) * 0.5;
+	float y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
 	
 	draw_background(data);
 
 	int x_tiles = data->x_size;
 	for (int idx = 0; idx < arr->size - 1; idx++) {
 		if (idx + x_tiles < arr->size) {
-			draw_line(data, (double []){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (double []){((((t_point *)arr->data[idx + x_tiles])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles])->hsb);
+			draw_line(data, (float []){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float []){((((t_point *)arr->data[idx + x_tiles])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles])->hsb);
 		}
 		if (idx % x_tiles != x_tiles - 1) {
 			if (data->display_interlace && idx + x_tiles + 1 < arr->size) {
-				draw_line(data, (double []){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (double []){((((t_point *)arr->data[idx + x_tiles + 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles + 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles + 1])->hsb);
+				draw_line(data, (float []){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float []){((((t_point *)arr->data[idx + x_tiles + 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles + 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles + 1])->hsb);
 			}
-			draw_line(data, (double []){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (double []){((((t_point *)arr->data[idx + 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + 1])->hsb);
+			draw_line(data, (float []){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float []){((((t_point *)arr->data[idx + 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + 1])->hsb);
 		}
 		if (idx % x_tiles != 0) {
 			if (data->display_interlace && idx + x_tiles - 1< arr->size) {
-				draw_line(data, (double []){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (double []){((((t_point *)arr->data[idx + x_tiles - 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles - 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles - 1])->hsb);
+				draw_line(data, (float []){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float []){((((t_point *)arr->data[idx + x_tiles - 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles - 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles - 1])->hsb);
 			}
 		}
 	}

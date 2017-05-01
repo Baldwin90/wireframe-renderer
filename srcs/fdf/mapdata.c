@@ -58,17 +58,17 @@ void		data_update_rotation(t_mapdata *data)
 	t_matrix *y;
 	t_matrix *z;
 	t_matrix *cache;
-	double alpha;
-	double beta;
-	double gamma;
+	float alpha;
+	float beta;
+	float gamma;
 
 	alpha = (data->alpha) * 0.01745329252;
 	beta = (data->beta) * 0.01745329252;
 	gamma = (data->gamma) * 0.01745329252;
 
-	x = matrix_create(3, 3, (double[]) {1, 0, 0}, (double[]){0, cos(alpha), sin(alpha)}, (double[]){0, -sin(alpha), cos(alpha)});
-	y = matrix_create(3, 3, (double[]){cos(beta), 0, -sin(beta)}, (double[]){0, 1, 0}, (double[]){sin(beta), 0, cos(beta)});
-	z = matrix_create(3, 3, (double[]){cos(gamma), sin(gamma), 0}, (double[]){-sin(gamma), cos(gamma), 0}, (double[]){0, 0, 1});
+	x = matrix_create(3, 3, (float[]) {1, 0, 0}, (float[]){0, cos(alpha), sin(alpha)}, (float[]){0, -sin(alpha), cos(alpha)});
+	y = matrix_create(3, 3, (float[]){cos(beta), 0, -sin(beta)}, (float[]){0, 1, 0}, (float[]){sin(beta), 0, cos(beta)});
+	z = matrix_create(3, 3, (float[]){cos(gamma), sin(gamma), 0}, (float[]){-sin(gamma), cos(gamma), 0}, (float[]){0, 0, 1});
 
 	cache = matrix_dotproduct(x, y);
 	if (data->rot_matrix) {
@@ -82,11 +82,11 @@ void		data_update_rotation(t_mapdata *data)
 	matrix_free(cache);
 }
 
-void		data_addpoint(t_mapdata *data, double coords[], float hsb[])
+void		data_addpoint(t_mapdata *data, float coords[], float hsb[])
 {
 	t_point *point;
 	point = ft_memalloc(sizeof(*point));
-	point->matrix_3d = matrix_create(1, 3, (double[]){coords[0]}, (double[]){coords[1]}, (double[]){coords[2]});
+	point->matrix_3d = matrix_create(1, 3, (float[]){coords[0]}, (float[]){coords[1]}, (float[]){coords[2]});
 	point->screen_x = -1;
 	point->screen_y = -1;
 	for (int i = 0; i < 3; i++) {
@@ -97,7 +97,7 @@ void		data_addpoint(t_mapdata *data, double coords[], float hsb[])
 	rotate_point_into_view(data, point);
 }
 
-void			data_set_value(t_mapdata *data, double *target, double value)
+void			data_set_value(t_mapdata *data, float *target, float value)
 {
 	while (value < 0) {
 		value += 360;
@@ -116,7 +116,7 @@ void			rotate_point_into_view(t_mapdata *data, t_point *point)
 	t_matrix *a;
 	t_matrix *b;
 
-	t_matrix *filter_matrix = matrix_create(3, 3, (double[]){1, 0, 0}, (double[]){0, 1, 0}, (double[]){0, 0, 0});
+	t_matrix *filter_matrix = matrix_create(3, 3, (float[]){1, 0, 0}, (float[]){0, 1, 0}, (float[]){0, 0, 0});
 	a = matrix_dotproduct(data->rot_matrix, point->matrix_3d);
 	b = matrix_dotproduct(filter_matrix, a);
 	point->screen_x = b->data[0][0];

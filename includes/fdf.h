@@ -9,14 +9,14 @@ typedef struct	s_matrix
 {
 	int	x;
 	int	y;
-	double **data;
+	float **data;
 }				t_matrix;
 
 typedef struct	s_point
 {
 	t_matrix	*matrix_3d;
-	double		screen_x;
-	double		screen_y;
+	float		screen_x;
+	float		screen_y;
 	float		hsb[3];
 }				t_point;
 
@@ -33,9 +33,9 @@ typedef struct	s_windata
 
 typedef struct	s_mapdata
 {
-	double		alpha;
-	double		beta;
-	double		gamma;
+	float		alpha;
+	float		beta;
+	float		gamma;
 	float		increment;
 	int			x_size;
 	int			background;
@@ -59,7 +59,7 @@ char			*ft_ftoa(float f);
 void			draw_stats(t_mapdata *data);
 int				draw_image(t_mapdata *data);
 void			draw_pixel(t_windata *data, int x, int y, int color);
-void			draw_line(D *dt, double a[], double b[], float c[], float d[]);
+void			draw_line(D *dt, float a[], float b[], float c[], float d[]);
 void			draw_background(t_mapdata *data);
 void			mem_swap(void *a, void *b, size_t size);
 void			draw_fdf(t_mapdata *data);
@@ -68,8 +68,8 @@ void			create_mlx(t_mapdata *data);
 void			map_fill(t_mapdata *data);
 t_mapdata		*data_create(int color);
 void			data_update_rotation(t_mapdata *data);
-void			data_addpoint(t_mapdata *data, double coords[], float hsb[]);
-void			data_set_value(t_mapdata *data, double *target, double value);
+void			data_addpoint(t_mapdata *data, float coords[], float hsb[]);
+void			data_set_value(t_mapdata *data, float *target, float value);
 void			rotate_point_into_view(t_mapdata *data, t_point *point);
 void			rotate_data_into_view(t_mapdata *data);
 t_matrix		*matrix_create(int x, int y, ...);

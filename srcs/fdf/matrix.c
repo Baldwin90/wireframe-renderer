@@ -17,7 +17,7 @@ t_matrix *matrix_create(int x, int y, ...)
 {
 	t_matrix *m;
 	va_list	va;
-	double *cache;
+	float *cache;
 
 	va_start(va, y);
 	m = ft_memalloc(sizeof(*m));
@@ -26,7 +26,7 @@ t_matrix *matrix_create(int x, int y, ...)
 	m->data = ft_memalloc(sizeof(*(m->data)) * y);
 	for (int i = 0; i < y; i++) {
 		m->data[i] = ft_memalloc(sizeof(*(*(m->data))) * x);
-		cache = va_arg(va, double *);
+		cache = va_arg(va, float *);
 		for (int j = 0; j < x; j++) {
 			m->data[i][j] = cache[j];
 		}

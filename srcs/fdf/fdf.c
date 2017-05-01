@@ -99,7 +99,7 @@ void map_fill(t_mapdata *data)
 	data->x_size = 19;
 	int arr[209] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,10,10,0,0,0,10,10,10,10,10,0,0,0,0,0,10,10,0,0,10,10,0,0,0,0,0,0,0,10,10,0,0,0,0,10,10,0,0,10,10,0,0,0,0,0,0,0,10,10,0,0,0,0,10,10,10,10,10,10,0,0,0,0,10,10,10,10,0,0,0,0,0,0,10,10,10,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	for (int i = 0; i < 209; i++) {
-		data_addpoint(data, (double []){(int)(i % data->x_size), arr[i], (int)(i / data->x_size)}, (float []){(float)i / 209, 1, 1});
+		data_addpoint(data, (float []){(int)(i % data->x_size), arr[i], (int)(i / data->x_size)}, (float []){(float)i / 209, 1, 1});
 	}
 }
 
@@ -108,8 +108,8 @@ int main(int argc, char const *argv[])
 	(void)argc;
 	(void)argv;
 
-	// t_matrix *x = matrix_create(3, 3, (double []){1, 2, 3}, (double []){4,5,6}, (double []){7,8,9});
-	// t_matrix *y = matrix_create(3, 3, (double []){10, 11, 12}, (double []){13,14,15}, (double []){16,17,18});
+	// t_matrix *x = matrix_create(3, 3, (float []){1, 2, 3}, (float []){4,5,6}, (float []){7,8,9});
+	// t_matrix *y = matrix_create(3, 3, (float []){10, 11, 12}, (float []){13,14,15}, (float []){16,17,18});
 	// t_matrix *z = matrix_dotproduct(x, y);
 	// matrix_free(x);
 	// matrix_free(y);
