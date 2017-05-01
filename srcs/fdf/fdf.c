@@ -15,8 +15,7 @@
 #include <mlx.h>
 #include <limits.h>
 
-int key_hook(int key_code, t_mapdata *data)
-{
+int key_hook(int key_code, t_mapdata *data) {
 	if (key_code == 53) {
 		data_free(data);
 		exit(1);
@@ -54,8 +53,7 @@ int key_hook(int key_code, t_mapdata *data)
 	if (key_code == 33) {
 		if (data->increment > 15) {
 			data->increment -= 5;
-		}
-		else if (data->increment > 1) {
+		} else if (data->increment > 1) {
 			data->increment -= 1;
 		} else {
 			data->increment -= 0.1;
@@ -68,8 +66,7 @@ int key_hook(int key_code, t_mapdata *data)
 	if (key_code == 30) {
 		if (data->increment >= 15) {
 			data->increment += 5;
-		}
-		else if (data->increment >= 1) {
+		} else if (data->increment >= 1) {
 			data->increment += 1;
 		} else {
 			data->increment += 0.1;
@@ -98,20 +95,15 @@ void	create_mlx(t_mapdata *data)
 // if it has color data_addpoint(data, (float[]){x, y, z}, RBGToHSB(color));
 
 //YOUR JOB :3
-void map_fill(t_mapdata *data)
-{
+void map_fill(t_mapdata *data) {
 	data->x_size = 19;
 	int arr[209] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,10,10,0,0,0,10,10,10,10,10,0,0,0,0,0,10,10,0,0,10,10,0,0,0,0,0,0,0,10,10,0,0,0,0,10,10,0,0,10,10,0,0,0,0,0,0,0,10,10,0,0,0,0,10,10,10,10,10,10,0,0,0,0,10,10,10,10,0,0,0,0,0,0,10,10,10,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	for (int i = 0; i < 209; i++) {
 		data_addpoint(data, (float []){(int)(i % data->x_size), arr[i], (int)(i / data->x_size)}, (float []){(float)i / 209, 1, 1});
 	}
-
-	(float []){1, 2, 3}
-
 }
 
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]) {
 	(void)argc;
 	(void)argv;
 

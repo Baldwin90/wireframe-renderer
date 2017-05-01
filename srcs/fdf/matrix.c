@@ -13,8 +13,7 @@
 #include <libft.h>
 #include <fdf.h>
 
-t_matrix *matrix_create(int x, int y, ...)
-{
+t_matrix *matrix_create(int x, int y, ...) {
 	t_matrix *m;
 	va_list	va;
 	float *cache;
@@ -35,8 +34,7 @@ t_matrix *matrix_create(int x, int y, ...)
 	return (m);
 }
 
-t_matrix *matrix_create_empty(int x, int y)
-{
+t_matrix *matrix_create_empty(int x, int y) {
 	t_matrix *m;
 
 	m = ft_memalloc(sizeof(*m));
@@ -49,8 +47,7 @@ t_matrix *matrix_create_empty(int x, int y)
 	return (m);
 }
 
-t_matrix *matrix_dotproduct(t_matrix *a, t_matrix *b)
-{
+t_matrix *matrix_dotproduct(t_matrix *a, t_matrix *b) {
 	if (a->x != b->y) {
 		return 0;
 	}
@@ -65,8 +62,7 @@ t_matrix *matrix_dotproduct(t_matrix *a, t_matrix *b)
 	return result;
 }
 
-void matrix_free(t_matrix *m)
-{
+void matrix_free(t_matrix *m) {
 	for (int i = 0; i < m->y; i++) {
 		free(m->data[i]);
 	}

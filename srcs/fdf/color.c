@@ -15,11 +15,9 @@
 #include <libft.h>
 #include <fdf.h>
 
-float lerp_angle(float a, float b, float t)
-{
+float lerp_angle(float a, float b, float t) {
 	float num = (b - a) - floor((b - a) / 360.0f) * 360.0f;
-	if (num > 180.0f)
-	{
+	if (num > 180.0f) {
 		num -= 360.0f;
 	}
 	return a + num * (t - (int) t);
@@ -30,22 +28,21 @@ float lerp(float a, float b, float t)
 	return a + (b - a) * (t - (int) t);
 }
 
-void HSBLerp(float a[], float b[], float t, float *vals)
-{
+void HSBLerp(float a[], float b[], float t, float *vals) {
 	float h,s;
 
-	if(a[2]==0){
+	if(a[2]==0) {
 		h=b[0];
 		s=b[2];
-	}else if(b[2]==0){
+	} else if(b[2]==0) {
 		h=a[0];
 		s=a[1];
-	}else{
-		if(a[1]==0){
+	} else {
+		if(a[1]==0) {
 			h=b[0];
-		}else if(b[2]==0){
+		} else if(b[2]==0) {
 			h=a[0];
-		}else{
+		} else {
 			// works around bug with LerpAngle
 			float angle = lerp_angle(a[0] * 360.0f, b[0] * 360.0f, t);
 			while (angle < 0.0f)
@@ -61,8 +58,7 @@ void HSBLerp(float a[], float b[], float t, float *vals)
 	vals[2] = lerp(a[2], b[2], t);
 }
 
-int HSBtoRGB(float hsbvals[])
-{
+int HSBtoRGB(float hsbvals[]) {
 	float hue=hsbvals[0], saturation=hsbvals[1], brightness=hsbvals[2];
 	int r = 0, g = 0, b = 0;
 	if (saturation == 0) {
@@ -109,8 +105,7 @@ int HSBtoRGB(float hsbvals[])
 	return (r << 16) | (g << 8) | (b << 0);
 }
 
-void RGBtoHSB(int r, int g, int b, float *vals)
-{
+void RGBtoHSB(int r, int g, int b, float *vals) {
 	float hue, saturation, brightness;
 	int cmax = (r > g) ? r : g;
 	if (b > cmax) cmax = b;

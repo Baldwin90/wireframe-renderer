@@ -16,15 +16,13 @@
 
 #define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
 
-char	*ft_ftoa(float f)
-{
+char	*ft_ftoa(float f) {
 	char buf[48];
 	snprintf (buf, sizeof(buf), "%.2f", f);
 	return (ft_strdup(buf));
 }
 
-void	draw_stats(t_mapdata *data)
-{
+void	draw_stats(t_mapdata *data) {
 	void *cache[10];
 	int y = -15;
 	if (data->draw_stats) {
@@ -69,23 +67,20 @@ void	draw_stats(t_mapdata *data)
 	}
 }
 
-int	draw_image(t_mapdata *data)
-{
+int	draw_image(t_mapdata *data) {
 	mlx_clear_window(data->window->mlx, data->window->win);
 	mlx_put_image_to_window(data->window->mlx, data->window->win, data->window->img, 0, 0);
 	draw_stats(data);
 	return (0);
 }
 
-void	draw_pixel(t_windata *data, int x, int y, int color)
-{
+void	draw_pixel(t_windata *data, int x, int y, int color) {
 	if (x < 0 || x >= SCREENSIZE || y < 0 || y >= SCREENSIZE)
 		return ;
 	*((int *)(data->pixel + ((x + y * SCREENSIZE) * data->bpp))) = color;
 }
 
-void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float color_b[])
-{
+void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float color_b[]) {
 	float hsbvals[3];
 
 	char steep = ABS(b[1] - a[1]) > ABS(b[0] - a[0]);
@@ -135,15 +130,13 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 	}
 }
 
-void draw_background(t_mapdata *data)
-{
+void draw_background(t_mapdata *data) {
 	for (int i = 0; i < SCREENSIZE * SCREENSIZE; i++) {
 		((int *)data->window->pixel)[i] = data->background;
 	}
 }
 
-void	mem_swap(void *a, void *b, size_t size)
-{
+void	mem_swap(void *a, void *b, size_t size) {
 	char cache;
 	char *a_mem;
 	char *b_mem;
@@ -157,8 +150,7 @@ void	mem_swap(void *a, void *b, size_t size)
 	}
 }
 
-void draw_fdf(t_mapdata *data)
-{
+void draw_fdf(t_mapdata *data) {
 	float x_min=2147483647, x_max=-2147483648, y_min=2147483647, y_max=-2147483648;
 	t_point *point;
 	t_arraylist *arr = data->arr;

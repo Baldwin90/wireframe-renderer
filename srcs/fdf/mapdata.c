@@ -15,8 +15,7 @@
 #include <math.h>
 #include <mlx.h>
 
-t_mapdata		*data_create(int color)
-{
+t_mapdata		*data_create(int color) {
 	t_mapdata *data;
 
 	data = ft_memalloc(sizeof(*data));
@@ -54,8 +53,7 @@ void		data_free(t_mapdata *data) {
 	free(data);
 }
 
-void		data_update_rotation(t_mapdata *data)
-{
+void		data_update_rotation(t_mapdata *data) {
 	t_matrix *x;
 	t_matrix *y;
 	t_matrix *z;
@@ -84,8 +82,7 @@ void		data_update_rotation(t_mapdata *data)
 	matrix_free(cache);
 }
 
-void		data_addpoint(t_mapdata *data, float coords[], float hsb[])
-{
+void		data_addpoint(t_mapdata *data, float coords[], float hsb[]) {
 	t_point *point;
 	point = ft_memalloc(sizeof(*point));
 	point->matrix_3d = matrix_create(1, 3, (float[]){coords[0]}, (float[]){coords[1]}, (float[]){coords[2]});
@@ -99,8 +96,7 @@ void		data_addpoint(t_mapdata *data, float coords[], float hsb[])
 	rotate_point_into_view(data, point);
 }
 
-void			data_set_value(t_mapdata *data, float *target, float value)
-{
+void			data_set_value(t_mapdata *data, float *target, float value) {
 	while (value < 0) {
 		value += 360;
 	}
@@ -113,8 +109,7 @@ void			data_set_value(t_mapdata *data, float *target, float value)
 	draw_fdf(data);
 }
 
-void			rotate_point_into_view(t_mapdata *data, t_point *point)
-{
+void			rotate_point_into_view(t_mapdata *data, t_point *point) {
 	t_matrix *a;
 	t_matrix *b;
 
@@ -128,8 +123,7 @@ void			rotate_point_into_view(t_mapdata *data, t_point *point)
 	matrix_free(filter_matrix);
 }
 
-void			rotate_data_into_view(t_mapdata *data)
-{
+void			rotate_data_into_view(t_mapdata *data) {
 	for (int i = 0; i < data->arr->size; i++) {
 		rotate_point_into_view(data, data->arr->data[i]);
 	}
