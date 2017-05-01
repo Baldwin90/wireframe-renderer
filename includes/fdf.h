@@ -2,6 +2,7 @@
 # define FDF_H
 
 #define SCREENSIZE 938
+#define RGB_MAX 16777215
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 

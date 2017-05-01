@@ -15,7 +15,7 @@
 #include <mlx.h>
 #include <limits.h>
 
-int key_hook(int key_code, t_mapdata *data) {
+int		key_hook(int key_code, t_mapdata *data) {
 	if (key_code == 53) {
 		data_free(data);
 		exit(1);
@@ -79,8 +79,7 @@ int key_hook(int key_code, t_mapdata *data) {
 	return (0);
 }
 
-void	create_mlx(t_mapdata *data)
-{
+void	create_mlx(t_mapdata *data) {
 	data->window->mlx = mlx_init();
 	data->window->win = mlx_new_window(data->window->mlx, SCREENSIZE, SCREENSIZE, "FDF");
 	data->window->img = mlx_new_image(data->window->mlx, SCREENSIZE, SCREENSIZE);
@@ -90,25 +89,65 @@ void	create_mlx(t_mapdata *data)
 	mlx_key_hook(data->window->win, &key_hook, data);
 }
 
+int		create_point(t_mapdata *data, char **fields, int z) {
+	int	point_data_count;
+	int	rgb_val;
+
+	for (int x = 0; i < field_count; x += 1) {
+		point = ft_strsplit(fields[x], ',');
+		point_data_count = ft_arrsize(point, *point);
+		switch (point_data_count) {
+			case 1:
+				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, (float[]){0, 0, 1});
+				break;
+			case 2:
+				if (rgb_val = ft_htoi(point[1]) == -1 || rgb_val > RGB_MAX) {
+					// ERROR, RGB value is not valid
+					return (FALSE);
+				}
+				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, RBGToHSB(rgb_val));
+				break;
+			default:
+				// ERROR, too many arguments in the point's data
+				return (FALSE);
+				break;
+		}
+	}
+	return (TRUE);
+}
+
 // if it's white data_addpoint(data, (float[]){x, y, z}, (float[]){0, 0, 1});
 // if it has color data_addpoint(data, (float[]){x, y, z}, RBGToHSB(color));
 
 //YOUR JOB :3
-void map_fill(t_mapdata *data, int fd) {
+void	map_fill(t_mapdata *data, int fd) {
 	int		gnl_res;
 	char	*line;
+	char	**fields;
+	int		field_count;
 
-	while ((gnl_res = get_next_line(fd, &line)) == 1) {
-		char	*fields;
-		int		field_count;
-
+	for (int z = 0; (gnl_res = get_next_line(fd, &line)) == 1; z += 1) {
 		fields = ft_strsplit(line, ' ');
-		for (field_count = 0; fields[field_count] != NULL; field_count += 1) {
-			;
+		field_count = ft_arrsize(fields, sizeof(*fields)); // replaces for loop... maybe
+		// for (field_count = 0; fields[field_count] != NULL; field_count += 1) {
+		// 	;
+		// }
+		if (data->x_size < 0) {
+			data->x_size = field_count;
+		} else if (field_count != x_size) {
+			// ERROR, not all rows are the same length or they are zero
+			fdf_error(2, line, fd, data);
+		} else if (field_count == 0) {
+			// ERROR, a row has no points
+			fdf_error(3, line, fd, data);
 		}
-
-
+		if (!create_point(data, fields, z)) {
+			// ERROR, issue creating point
+			fdf_error(4, line, fd, data);
+		}
 	}
+	if (line != NULL)
+		free(line);
 	// data->x_size = 19;
 	// int arr[209] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,10,10,0,0,0,10,10,10,10,10,0,0,0,0,0,10,10,0,0,10,10,0,0,0,0,0,0,0,10,10,0,0,0,0,10,10,0,0,10,10,0,0,0,0,0,0,0,10,10,0,0,0,0,10,10,10,10,10,10,0,0,0,0,10,10,10,10,0,0,0,0,0,0,10,10,10,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	// for (int i = 0; i < 209; i++) {
@@ -116,7 +155,7 @@ void map_fill(t_mapdata *data, int fd) {
 	// }
 }
 
-void fdf_error(int fdf_err_num, char *line, int fd, t_mapdata *data) {
+void	fdf_error(int fdf_err_num, char *line, int fd, t_mapdata *data) {
 	if (line) {
 		free(line);
 	}
@@ -129,7 +168,7 @@ void fdf_error(int fdf_err_num, char *line, int fd, t_mapdata *data) {
 	exit(fdf_err_num);
 }
 
-int main(int argc, char const *argv[]) {
+int		main(int argc, char const *argv[]) {
 	// (void)argc;
 	// (void)argv;
 	// t_matrix *x = matrix_create(3, 3, (float []){1, 2, 3}, (float []){4,5,6}, (float []){7,8,9});
