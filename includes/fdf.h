@@ -5,6 +5,7 @@
 #define RGB_MAX 16777215
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
+#define FREE_SPLITS(arr, s) for(int i = 0; i < s; ++i){free(arr[i]);}free(arr);
 
 typedef struct	s_matrix
 {

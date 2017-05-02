@@ -101,7 +101,6 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z) {
 	for (int x = 0; x < field_count; x += 1) {
 		point = ft_strsplit(fields[x], ',');
 		ARR_SIZE(point, point_data_count);
-		// point_data_count = ft_arrsize(point, sizeof(*point));
 		switch (point_data_count) {
 			case 1:
 				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, (float[]){0, 0, 1});
@@ -109,26 +108,24 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z) {
 			case 2:
 				if ((rgb_val = ft_htoi(point[1])) == -1 || rgb_val > RGB_MAX) {
 					// ERROR, RGB value is not valid
+					FREE_SPLITS(point, point_data_count);
 					return (FALSE);
 				}
 				float hsbvals[3];
-				RBGToHSB(r >> 16, (g | 0xFF00) >> 8, b | 0xFF, hsbvals);
+				RGBtoHSB(rgb_val >> 16, (rgb_val | 0xFF00) >> 8, rgb_val & 0xFF, hsbvals);
 				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, hsbvals); // I DON'T KNOW HOW TO USE THE LAST FUNCTION
-				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, (float[]){0, 0, 1}); // PLACEHOLDER LINE
 				break;
 			default:
 				// ERROR, too many arguments in the point's data
+				FREE_SPLITS(point, point_data_count);
 				return (FALSE);
 				break;
 		}
+		FREE_SPLITS(point, point_data_count);
 	}
 	return (TRUE);
 }
 
-// if it's white data_addpoint(data, (float[]){x, y, z}, (float[]){0, 0, 1});
-// if it has color data_addpoint(data, (float[]){x, y, z}, RBGToHSB(color));
-
-//YOUR JOB :3
 void	map_fill(t_mapdata *data, int fd) {
 	int		gnl_res;
 	char	*line;
@@ -136,36 +133,30 @@ void	map_fill(t_mapdata *data, int fd) {
 	int		field_count;
 
 	line = NULL;
-	// YOU HAVE TO FREE THE FIELDS AND THE POINT DATA!!!!!!!
 	gnl_res = get_next_line(fd, &line);
 	for (int z = 0; gnl_res == 1; z += 1, gnl_res = get_next_line(fd, &line)) {
 		fields = ft_strsplit(line, ' ');
 		ARR_SIZE(fields, field_count);
-		// field_count = ft_arrsize(fields, sizeof(*fields)); // replaces for loop... maybe
-		// for (field_count = 0; fields[field_count] != NULL; field_count += 1) {
-		// 	;
-		// }
 		if (data->x_size < 0) {
 			data->x_size = field_count;
 		} else if (field_count != data->x_size) {
 			// ERROR, not all rows are the same length or they are zero
+			FREE_SPLITS(fields, field_count);
 			fdf_error(3, line, fd, data);
 		} else if (field_count == 0) {
 			// ERROR, a row has no points
+			FREE_SPLITS(fields, field_count);
 			fdf_error(4, line, fd, data);
 		}
 		if (!create_point(data, fields, field_count, z)) {
 			// ERROR, issue creating point
+			FREE_SPLITS(fields, field_count);
 			fdf_error(5, line, fd, data);
 		}
+		FREE_SPLITS(fields, field_count);
 	}
 	if (line != NULL)
 		free(line);
-	// data->x_size = 19;
-	// int arr[209] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,10,10,0,0,0,10,10,10,10,10,0,0,0,0,0,10,10,0,0,10,10,0,0,0,0,0,0,0,10,10,0,0,0,0,10,10,0,0,10,10,0,0,0,0,0,0,0,10,10,0,0,0,0,10,10,10,10,10,10,0,0,0,0,10,10,10,10,0,0,0,0,0,0,10,10,10,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,10,10,0,0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	// for (int i = 0; i < 209; i++) {
-	// 	data_addpoint(data, (float []){(int)(i % data->x_size), arr[i], (int)(i / data->x_size)}, (float []){(float)i / 209, 1, 1});
-	// }
 }
 
 void	fdf_error(int fdf_err_num, char *line, int fd, t_mapdata *data) {
@@ -184,15 +175,6 @@ void	fdf_error(int fdf_err_num, char *line, int fd, t_mapdata *data) {
 }
 
 int		main(int argc, char const *argv[]) {
-	// (void)argc;
-	// (void)argv;
-	// t_matrix *x = matrix_create(3, 3, (float []){1, 2, 3}, (float []){4,5,6}, (float []){7,8,9});
-	// t_matrix *y = matrix_create(3, 3, (float []){10, 11, 12}, (float []){13,14,15}, (float []){16,17,18});
-	// t_matrix *z = matrix_dotproduct(x, y);
-	// matrix_free(x);
-	// matrix_free(y);
-	// matrix_free(z);
-
 	int fd;
 
 	if (argc != 2) {
