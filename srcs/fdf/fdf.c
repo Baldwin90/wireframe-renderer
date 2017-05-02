@@ -112,7 +112,7 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z) {
 					return (FALSE);
 				}
 				float hsbvals[3];
-				RGBtoHSB(rgb_val >> 16, (rgb_val | 0xFF00) >> 8, rgb_val & 0xFF, hsbvals);
+				RGBtoHSB(rgb_val >> 16, (rgb_val & 0xFF00) >> 8, rgb_val & 0xFF, hsbvals);
 				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, hsbvals); // I DON'T KNOW HOW TO USE THE LAST FUNCTION
 				break;
 			default:
@@ -122,7 +122,7 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z) {
 				break;
 		}
 		FREE_SPLITS(point, point_data_count);
-	}
+	} 
 	return (TRUE);
 }
 
