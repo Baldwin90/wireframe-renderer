@@ -111,7 +111,9 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z) {
 					// ERROR, RGB value is not valid
 					return (FALSE);
 				}
-				// data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, RBGToHSB(rgb_val)); // I DON'T KNOW HOW TO USE THE LAST FUNCTION
+				float hsbvals[3];
+				RBGToHSB(r >> 16, (g | 0xFF00) >> 8, b | 0xFF, hsbvals);
+				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, hsbvals); // I DON'T KNOW HOW TO USE THE LAST FUNCTION
 				data_addpoint(data, (float[]){x, ft_atoi(point[0]), z}, (float[]){0, 0, 1}); // PLACEHOLDER LINE
 				break;
 			default:
