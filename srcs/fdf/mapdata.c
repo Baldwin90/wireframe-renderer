@@ -66,9 +66,9 @@ void		data_update_rotation(t_mapdata *data) {
 	beta = (data->beta) * 0.01745329252;
 	gamma = (data->gamma) * 0.01745329252;
 
-	x = matrix_create(3, 3, (float[]) {1, 0, 0}, (float[]){0, cos(alpha), sin(alpha)}, (float[]){0, -sin(alpha), cos(alpha)});
-	y = matrix_create(3, 3, (float[]){cos(beta), 0, -sin(beta)}, (float[]){0, 1, 0}, (float[]){sin(beta), 0, cos(beta)});
-	z = matrix_create(3, 3, (float[]){cos(gamma), sin(gamma), 0}, (float[]){-sin(gamma), cos(gamma), 0}, (float[]){0, 0, 1});
+	x = matrix_create(4, 4, (float[]) {1, 0, 0, 0}, (float[]){0, cos(alpha), -sin(alpha), 0}, (float[]){0, sin(alpha), cos(alpha), 0}, (float[]){0, 0, 0, 1});
+	y = matrix_create(4, 4, (float[]){cos(beta), 0, sin(beta), 0}, (float[]){0, 1, 0, 0}, (float[]){-sin(beta), 0, cos(beta), 0}, (float[]){0, 0, 0, 1});
+	z = matrix_create(4, 4, (float[]){cos(gamma), -sin(gamma), 0, 0}, (float[]){sin(gamma), cos(gamma), 0, 0}, (float[]){0, 0, 1, 0}, (float[]){0, 0, 0, 1});
 
 	cache = matrix_dotproduct(x, y);
 	if (data->rot_matrix) {
@@ -85,7 +85,7 @@ void		data_update_rotation(t_mapdata *data) {
 void		data_addpoint(t_mapdata *data, float coords[], float hsb[]) {
 	t_point *point;
 	point = ft_memalloc(sizeof(*point));
-	point->matrix_3d = matrix_create(1, 3, (float[]){coords[0]}, (float[]){coords[1]}, (float[]){coords[2]});
+	point->matrix_3d = matrix_create(1, 4, (float[]){coords[0]}, (float[]){coords[1]}, (float[]){coords[2]}, (float[]){0});
 	point->screen_x = -1;
 	point->screen_y = -1;
 	for (int i = 0; i < 3; i++) {
@@ -113,7 +113,7 @@ void			rotate_point_into_view(t_mapdata *data, t_point *point) {
 	t_matrix *a;
 	t_matrix *b;
 
-	t_matrix *filter_matrix = matrix_create(3, 3, (float[]){1, 0, 0}, (float[]){0, 1, 0}, (float[]){0, 0, 0});
+	t_matrix *filter_matrix = matrix_create(4, 4, (float[]){1, 0, 0, 0}, (float[]){0, 1, 0, 0}, (float[]){0, 0, 0, 0}, (float[]){0, 0, 0, 1});
 	a = matrix_dotproduct(data->rot_matrix, point->matrix_3d);
 	b = matrix_dotproduct(filter_matrix, a);
 	point->screen_x = b->data[0][0];
