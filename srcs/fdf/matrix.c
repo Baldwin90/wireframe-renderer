@@ -13,23 +13,28 @@
 #include <libft.h>
 #include <fdf.h>
 
+#define I_DO_DECLARE int i;int j;t_matrix *m;va_list va;float *cache;
+
 t_matrix	*matrix_create(int x, int y, ...)
 {
-	t_matrix	*m;
-	va_list		va;
-	float		*cache;
-
+	I_DO_DECLARE;
 	va_start(va, y);
 	m = ft_memalloc(sizeof(*m));
 	m->x = x;
 	m->y = y;
 	m->data = ft_memalloc(sizeof(*(m->data)) * y);
-	for (int i = 0; i < y; i++) {
+	i = 0;
+	while (i < y)
+	{
 		m->data[i] = ft_memalloc(sizeof(*(*(m->data))) * x);
 		cache = va_arg(va, float *);
-		for (int j = 0; j < x; j++) {
+		j = 0;
+		while (j < x)
+		{
 			m->data[i][j] = cache[j];
+			j++;
 		}
+		i++;
 	}
 	va_end(va);
 	return (m);
@@ -82,7 +87,8 @@ t_matrix	*matrix_dotproduct(t_matrix *a, t_matrix *b)
 	return (result);
 }
 
-void		matrix_free(t_matrix *m) {
+void		matrix_free(t_matrix *m)
+{
 	int	i;
 
 	i = 0;
