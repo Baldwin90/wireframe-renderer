@@ -26,8 +26,10 @@
 #define DG data->gamma
 #define DI data->increment
 #define DW data->window
+#define FS FREE_SPLITS(fields, field_count)
 #define MGDA mlx_get_data_addr
 #define RV rgb_val
+#define A int gnl_res; char *line;char **fields;int field_count; int z;
 
 
 int		key_hook(int key_code, t_mapdata *data)
@@ -74,34 +76,25 @@ int		key_hook(int key_code, t_mapdata *data)
 	if (key_code == 33)
 	{
 		if (DI > 15)
-		{
 			DI -= 5;
-		} else if (DI > 1)
-		{
+		else if (DI > 1)
 			DI -= 1;
-		} else {
+		else
 			DI -= 0.1;
-		}
-		if (DI < 0.1) {
+		if (DI < 0.1)
 			DI = 0.1;
-		}
 		draw_image(data);
 	}
-	if (key_code == 30) {
+	if (key_code == 30)
+	{
 		if (DI >= 15)
-		{
 			DI += 5;
-		} else if (DI >= 1)
-		{
+		else if (DI >= 1)
 			DI += 1;
-		} else
-		{
+		else
 			DI += 0.1;
-		}
 		if (DI > 45)
-		{
 			DI = 45;
-		}
 		draw_image(data);
 	}
 	return (0);
@@ -124,27 +117,29 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z)
 	int		point_data_count;
 	int		RV;
 
-	for (int x = 0; x < field_count; x += 1) {
+	for (int x = 0; x < field_count; x += 1)
+	{
 		point = ft_strsplit(fields[x], ',');
 		ARR_SIZE(point, point_data_count);
-		switch (point_data_count) {
-			case 1:
-				DAP(data,(float[]){x,ft_atoi(point[0]), z}, (float[]){0, 0, 1});
-				break;
-			case 2:
-				if ((RV = ft_htoi(point[1])) == -1 || RV > RGB_MAX) {
-					// ERROR, RGB value is not valid
-					FREE_SPLITS(point, point_data_count);
-					return (FALSE);
-				}
-				float hsbvals[3];
-				RGBtoHSB(RV >> 16, (RV & 0xFF00) >> 8, RV & 0xFF, hsbvals);
-				DAP(data, (float[]){x, ft_atoi(point[0]), z}, hsbvals);
-				break;
-			default:
+		switch (point_data_count)
+		{
+		case 1:
+			DAP(data,(float[]){x,ft_atoi(point[0]), z}, (float[]){0, 0, 1});
+			break;
+		case 2:
+			if ((RV = ft_htoi(point[1])) == -1 || RV > RGB_MAX)
+			{
 				FREE_SPLITS(point, point_data_count);
 				return (FALSE);
-				break;
+			}
+			float hsbvals[3];
+			RGBtoHSB(RV >> 16, (RV & 0xFF00) >> 8, RV & 0xFF, hsbvals);
+			DAP(data, (float[]){x, ft_atoi(point[0]), z}, hsbvals);
+			break;
+		default:
+			FREE_SPLITS(point, point_data_count);
+			return (FALSE);
+			break;
 		}
 		FREE_SPLITS(point, point_data_count);
 	}
@@ -153,34 +148,28 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z)
 
 void	map_fill(t_mapdata *data, int fd)
 {
-	int		gnl_res;
-	char	*line;
-	char	**fields;
-	int		field_count;
-
+	A;
 	line = NULL;
 	gnl_res = get_next_line(fd, &line);
-	for (int z = 0; gnl_res == 1; z += 1, gnl_res = get_next_line(fd, &line)) {
+	for (z = 0; gnl_res == 1; z += 1, gnl_res = get_next_line(fd, &line))
+	{
 		fields = ft_strsplit(line, ' ');
 		ARR_SIZE(fields, field_count);
 		if (data->x_size < 0)
-		{
 			data->x_size = field_count;
-		} else if (field_count != data->x_size)
+		else if (field_count != data->x_size)
 		{
-			FREE_SPLITS(fields, field_count);
-			fdf_error(3, line, fd, data);
-		} else if (field_count == 0)
+			FS; fdf_error(3, line, fd, data);
+		}
+		else if (field_count == 0)
 		{
-			FREE_SPLITS(fields, field_count);
-			fdf_error(4, line, fd, data);
+			FS; fdf_error(4, line, fd, data);
 		}
 		if (!create_point(data, fields, field_count, z))
 		{
-			FREE_SPLITS(fields, field_count);
-			fdf_error(5, line, fd, data);
+			FS; fdf_error(5, line, fd, data);
 		}
-		FREE_SPLITS(fields, field_count);
+		FS;
 	}
 	if (line != NULL)
 		free(line);
@@ -208,22 +197,17 @@ void	fdf_error(int fdf_err_num, char *line, int fd, t_mapdata *data)
 
 int		main(int argc, char const *argv[])
 {
-	int fd;
+	int			fd;
+	t_mapdata	*data;
 
 	if (argc != 2)
-	{
 		fdf_error(1, NULL, -1, NULL);
-	}
 	if ((fd = open(argv[1], O_RDONLY)) == -1)
-	{
 		fdf_error(2, NULL, -1, NULL);
-	}
-	t_mapdata *data = data_create(0x141116);
+	data = data_create(0x141116);
 	map_fill(data, fd);
 	if (close(fd) == -1)
-	{
 		fdf_error(1000, NULL, -1, data);
-	}
 	create_mlx(data);
 	draw_fdf(data);
 	mlx_loop(DW->mlx);
