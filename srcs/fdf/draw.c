@@ -175,7 +175,7 @@ void draw_fdf(t_mapdata *data) {
 
 	float x_offset = (1 - ((x_max - x_min) * scale)) * 0.5;
 	float y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
-	
+
 	draw_background(data);
 
 	int x_tiles = data->x_size;
