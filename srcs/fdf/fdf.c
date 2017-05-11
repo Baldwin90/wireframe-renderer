@@ -30,10 +30,12 @@
 #define FSFEIII FS; fdf_error(3, line, fd, data)
 #define FSFEIV FS; fdf_error(4, line, fd, data)
 #define FSFEV FS; fdf_error(5, line, fd, data)
+#define FSRE FREE_SPLITS(point, point_data_count);return (FALSE);
 #define MGDA mlx_get_data_addr
 #define RV rgb_val
-#define A int gnl_res; char *line;char **fields;int field_count; int z;
-#define B char **point;int point_data_count;int RV; float hsbvals[3]; int x;
+#define C line = NULL; gnl_res = get_next_line(fd, &line); z = 0;
+#define A int gnl_res; char *line;char **fields;int field_count; int z; C;
+#define B char **point;int point_data_count;int RV; float hsbvals[3]; int x = 0;
 
 int		key_hook(int key_code, t_mapdata *data)
 {
@@ -117,7 +119,7 @@ void	create_mlx(t_mapdata *data)
 int		create_point(t_mapdata *data, char **fields, int field_count, int z)
 {
 	B;
-	for (x = 0; x < field_count; x += 1)
+	while (x < field_count)
 	{
 		point = ft_strsplit(fields[x], ',');
 		ARR_SIZE(point, point_data_count);
@@ -127,18 +129,17 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z)
 		{
 			if ((RV = ft_htoi(point[1])) == -1 || RV > RGB_MAX)
 			{
-				FREE_SPLITS(point, point_data_count);
-				return (FALSE);
+				FSRE;
 			}
 			RGBtoHSB(RV >> 16, (RV & 0xFF00) >> 8, RV & 0xFF, hsbvals);
 			DAP(data, (float[]){x, ft_atoi(point[0]), z}, hsbvals);
 		}
 		else
 		{
-			FREE_SPLITS(point, point_data_count);
-			return (FALSE);
+			FSRE;
 		}
 		FREE_SPLITS(point, point_data_count);
+		x += 1;
 	}
 	return (TRUE);
 }
@@ -146,9 +147,7 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z)
 void	map_fill(t_mapdata *data, int fd)
 {
 	A;
-	line = NULL;
-	gnl_res = get_next_line(fd, &line);
-	for (z = 0; gnl_res == 1; z += 1, gnl_res = get_next_line(fd, &line))
+	while (gnl_res == 1)
 	{
 		fields = ft_strsplit(line, ' ');
 		ARR_SIZE(fields, field_count);
@@ -167,6 +166,8 @@ void	map_fill(t_mapdata *data, int fd)
 			FSFEV;
 		}
 		FS;
+		z += 1;
+		gnl_res = get_next_line(fd, &line);
 	}
 	if (line != NULL)
 		free(line);
