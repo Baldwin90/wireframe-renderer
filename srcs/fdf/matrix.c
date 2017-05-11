@@ -13,10 +13,11 @@
 #include <libft.h>
 #include <fdf.h>
 
-t_matrix *matrix_create(int x, int y, ...) {
-	t_matrix *m;
-	va_list	va;
-	float *cache;
+t_matrix	*matrix_create(int x, int y, ...)
+{
+	t_matrix	*m;
+	va_list		va;
+	float		*cache;
 
 	va_start(va, y);
 	m = ft_memalloc(sizeof(*m));
@@ -34,37 +35,61 @@ t_matrix *matrix_create(int x, int y, ...) {
 	return (m);
 }
 
-t_matrix *matrix_create_empty(int x, int y) {
-	t_matrix *m;
+t_matrix	*matrix_create_empty(int x, int y)
+{
+	t_matrix	*m;
+	int			i;
 
 	m = ft_memalloc(sizeof(*m));
 	m->x = x;
 	m->y = y;
 	m->data = ft_memalloc(sizeof(*(m->data)) * y);
-	for (int i = 0; i < y; i++) {
+	i = 0;
+	while (i < y)
+	{
 		m->data[i] = ft_memalloc(sizeof(*(*(m->data))) * x);
+		i++;
 	}
 	return (m);
 }
 
-t_matrix *matrix_dotproduct(t_matrix *a, t_matrix *b) {
-	if (a->x != b->y) {
-		return 0;
-	}
-	t_matrix *result = matrix_create_empty(b->x, a->y);
-	for (int i0 = 0; i0 < a->y; i0++) {
-		for (int i1 = 0; i1 < b->x; i1++) {
-			for (int i2 = 0; i2 < b->y; i2++) {
+t_matrix	*matrix_dotproduct(t_matrix *a, t_matrix *b)
+{
+	int			i0;
+	int			i1;
+	int			i2;
+	t_matrix	*result;
+
+	if (a->x != b->y)
+		return (0);
+	result = matrix_create_empty(b->x, a->y);
+	i0 = 0;
+	while (i0 < a->y)
+	{
+		i1 = 0;
+		while (i1 < b->x)
+		{
+			i2 = 0;
+			while (i2 < b->y)
+			{
 				result->data[i0][i1] += a->data[i0][i2] * b->data[i2][i1];
+				i2++;
 			}
+			i1++;
 		}
+		i0++;
 	}
-	return result;
+	return (result);
 }
 
-void matrix_free(t_matrix *m) {
-	for (int i = 0; i < m->y; i++) {
+void		matrix_free(t_matrix *m) {
+	int	i;
+
+	i = 0;
+	while (i < m->y)
+	{
 		free(m->data[i]);
+		i++;
 	}
 	free(m->data);
 	free(m);
