@@ -40,7 +40,7 @@ void	HSBLerp(float a[], float b[], float t, float *vals)
 		h = b[0];
 		s = b[2];
 	}
-	else if (b[2]==0)
+	else if (b[2] == 0)
 	{
 		h = a[0];
 		s = a[1];
@@ -88,36 +88,36 @@ int		HSBtoRGB(float hsbvals[])
 		float t = brightness * (1.0f - (saturation * (1.0f - f)));
 		switch ((int)h)
 		{
-			case 0:
-				r = (int)(brightness * 255.0f + 0.5f);
-				g = (int)(t * 255.0f + 0.5f);
-				b = (int)(p * 255.0f + 0.5f);
-				break ;
-			case 1:
-				r = (int)(q * 255.0f + 0.5f);
-				g = (int)(brightness * 255.0f + 0.5f);
-				b = (int)(p * 255.0f + 0.5f);
-				break ;
-			case 2:
-				r = (int)(p * 255.0f + 0.5f);
-				g = (int)(brightness * 255.0f + 0.5f);
-				b = (int)(t * 255.0f + 0.5f);
-				break ;
-			case 3:
-				r = (int)(p * 255.0f + 0.5f);
-				g = (int)(q * 255.0f + 0.5f);
-				b = (int)(brightness * 255.0f + 0.5f);
-				break ;
-			case 4:
-				r = (int)(t * 255.0f + 0.5f);
-				g = (int)(p * 255.0f + 0.5f);
-				b = (int)(brightness * 255.0f + 0.5f);
-				break ;
-			case 5:
-				r = (int)(brightness * 255.0f + 0.5f);
-				g = (int)(p * 255.0f + 0.5f);
-				b = (int)(q * 255.0f + 0.5f);
-				break ;
+		case 0:
+			r = (int)(brightness * 255.0f + 0.5f);
+			g = (int)(t * 255.0f + 0.5f);
+			b = (int)(p * 255.0f + 0.5f);
+			break ;
+		case 1:
+			r = (int)(q * 255.0f + 0.5f);
+			g = (int)(brightness * 255.0f + 0.5f);
+			b = (int)(p * 255.0f + 0.5f);
+			break ;
+		case 2:
+			r = (int)(p * 255.0f + 0.5f);
+			g = (int)(brightness * 255.0f + 0.5f);
+			b = (int)(t * 255.0f + 0.5f);
+			break ;
+		case 3:
+			r = (int)(p * 255.0f + 0.5f);
+			g = (int)(q * 255.0f + 0.5f);
+			b = (int)(brightness * 255.0f + 0.5f);
+			break ;
+		case 4:
+			r = (int)(t * 255.0f + 0.5f);
+			g = (int)(p * 255.0f + 0.5f);
+			b = (int)(brightness * 255.0f + 0.5f);
+			break ;
+		case 5:
+			r = (int)(brightness * 255.0f + 0.5f);
+			g = (int)(p * 255.0f + 0.5f);
+			b = (int)(q * 255.0f + 0.5f);
+			break ;
 		}
 	}
 	return ((r << 16) | (g << 8) | (b << 0));
