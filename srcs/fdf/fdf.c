@@ -27,10 +27,13 @@
 #define DI data->increment
 #define DW data->window
 #define FS FREE_SPLITS(fields, field_count)
+#define FSFEIII FS; fdf_error(3, line, fd, data)
+#define FSFEIV FS; fdf_error(4, line, fd, data)
+#define FSFEV FS; fdf_error(5, line, fd, data)
 #define MGDA mlx_get_data_addr
 #define RV rgb_val
 #define A int gnl_res; char *line;char **fields;int field_count; int z;
-
+#define B char **point;int point_data_count;int RV; float hsbvals[3]; int x;
 
 int		key_hook(int key_code, t_mapdata *data)
 {
@@ -113,33 +116,27 @@ void	create_mlx(t_mapdata *data)
 
 int		create_point(t_mapdata *data, char **fields, int field_count, int z)
 {
-	char	**point;
-	int		point_data_count;
-	int		RV;
-
-	for (int x = 0; x < field_count; x += 1)
+	B;
+	for (x = 0; x < field_count; x += 1)
 	{
 		point = ft_strsplit(fields[x], ',');
 		ARR_SIZE(point, point_data_count);
-		switch (point_data_count)
+		if (point_data_count == 1)
+			DAP(data, (float[]){x, ft_atoi(point[0]), z}, (float[]){0, 0, 1});
+		else if (point_data_count == 2)
 		{
-		case 1:
-			DAP(data,(float[]){x,ft_atoi(point[0]), z}, (float[]){0, 0, 1});
-			break;
-		case 2:
 			if ((RV = ft_htoi(point[1])) == -1 || RV > RGB_MAX)
 			{
 				FREE_SPLITS(point, point_data_count);
 				return (FALSE);
 			}
-			float hsbvals[3];
 			RGBtoHSB(RV >> 16, (RV & 0xFF00) >> 8, RV & 0xFF, hsbvals);
 			DAP(data, (float[]){x, ft_atoi(point[0]), z}, hsbvals);
-			break;
-		default:
+		}
+		else
+		{
 			FREE_SPLITS(point, point_data_count);
 			return (FALSE);
-			break;
 		}
 		FREE_SPLITS(point, point_data_count);
 	}
@@ -159,15 +156,15 @@ void	map_fill(t_mapdata *data, int fd)
 			data->x_size = field_count;
 		else if (field_count != data->x_size)
 		{
-			FS; fdf_error(3, line, fd, data);
+			FSFEIII;
 		}
 		else if (field_count == 0)
 		{
-			FS; fdf_error(4, line, fd, data);
+			FSFEIV;
 		}
 		if (!create_point(data, fields, field_count, z))
 		{
-			FS; fdf_error(5, line, fd, data);
+			FSFEV;
 		}
 		FS;
 	}
