@@ -105,14 +105,6 @@
 #define FXDHB FXS,&(hsb[0])
 #define WHILEDS if(did_swap){hsb_lerp(cb,ca,FXDHB);}else{hsb_lerp(ca,cb,FXDHB);}
 
-char	*ft_ftoa(float f)
-{
-	char	buf[48];
-
-	snprintf(buf, sizeof(buf), "%.2f", f);
-	return (ft_strdup(buf));
-}
-
 void	draw_stats(t_mapdata *data)
 {
 	DSVAR;
@@ -139,21 +131,6 @@ void	draw_stats(t_mapdata *data)
 	}
 	else
 		MSP(DMLXW5, Y15, 0x515151, HIDDEN_STATS);
-}
-
-int		draw_image(t_mapdata *data)
-{
-	mlx_clear_window(DWMLX, DWW);
-	mlx_put_image_to_window(DWMLX, DWW, data->window->img, 0, 0);
-	draw_stats(data);
-	return (0);
-}
-
-void	draw_pixel(t_windata *data, int x, int y, int color)
-{
-	if (x < 0 || x >= SCREENSIZE || y < 0 || y >= SCREENSIZE)
-		return ;
-	*((int *)(data->pixel + ((x + y * SCREENSIZE) * data->bpp))) = color;
 }
 
 void	draw_line(t_mapdata *data, ABCOLOR cb[])
