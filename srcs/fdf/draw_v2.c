@@ -14,6 +14,9 @@
 #include <fdf.h>
 #include <mlx.h>
 
+#define DWW data->window->win
+#define DWMLX data->window->mlx
+
 char	*ft_ftoa(float f)
 {
 	char	buf[48];

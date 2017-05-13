@@ -1,4 +1,4 @@
-FILES			= color color_v2 draw draw_v2 fdf mapdata mapdata_v2 matrix
+FILES			= color draw draw_v2 fdf mapdata mapdata_v2 matrix
 
 DOTCFILES		= $(addprefix srcs/fdf/, $(addsuffix .c, $(FILES)))
 OBJECT_FILES	= $(addprefix build/, $(addsuffix .o, $(FILES)))

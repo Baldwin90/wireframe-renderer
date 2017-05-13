@@ -26,36 +26,6 @@
 #define FLOATS float alpha;float beta;float gamma;
 #define TMATRICES t_matrix *x; t_matrix *y;t_matrix *z;t_matrix *cache;
 
-t_mapdata		*data_create(int color)
-{
-	t_mapdata *data;
-
-	data = ft_memalloc(sizeof(*data));
-	data->x_size = -1;
-	data->alpha = 135;
-	data->beta = 25;
-	data->gamma = 0;
-	data->increment = 4;
-	data->draw_stats = 1;
-	data->anti_alias = 1;
-	data->display_interlace = 1;
-	data->arr = arraylist_new(10, 1.5);
-	data->window = ft_memalloc(sizeof(*(data->window)));
-	data->background = color;
-	data_update_rotation(data);
-	return (data);
-}
-
-void			window_free(t_windata *w)
-{
-	if (w->mlx)
-	{
-		mlx_destroy_image(w->mlx, w->img);
-		mlx_destroy_window(w->mlx, w->win);
-	}
-	free(w);
-}
-
 void			data_free(t_mapdata *data)
 {
 	int	i;
@@ -150,16 +120,4 @@ void			rotate_point_into_view(t_mapdata *data, t_point *point)
 	matrix_free(a);
 	matrix_free(b);
 	matrix_free(filter_matrix);
-}
-
-void			rotate_data_into_view(t_mapdata *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->arr->size)
-	{
-		rotate_point_into_view(data, data->arr->data[i]);
-		i++;
-	}
 }
