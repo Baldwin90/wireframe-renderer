@@ -19,10 +19,12 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#define D data, &
 #define DA data->alpha
 #define DAP data_addpoint
 #define DB data->beta
 #define DD data->draw_stats
+#define DDI data->display_interlace
 #define DG data->gamma
 #define DI data->increment
 #define DW data->window
@@ -35,9 +37,12 @@
 #define KC124 if (KCE 124) DSV(data, &(DB), DB - DI);
 #define KC12 if (KCE 12) DSV(data, &(DG), DG - DI);
 #define KC14 if (KCE 14) DSV(data, &(DG), DG + DI);
-#define KC15 if (KCE 15) {DI = 4;DSV(data, &(DA), 135);DSV(data, &(DB), 25);DSV(data, &(DG), 0);}
-#define KC4 if (KCE 4) {DD = !DD;draw_image(data);}
-#define KCEX KC53 KC126 KC125 KC123 KC124 KC12 KC14 KC15
+#define KC15 if (KCE 15) {DI = 4;DSV(D(DA), 135);DSV(D(DB), 25);DSV(D(DG), 0);};
+#define KC4 if (KCE 4) {DD = !DD;draw_image(data);};
+#define KC7 if (KCE 7) {DDI = !DDI;draw_fdf(data);};
+#define KC8 if (KCE 8){data->anti_alias = !data->anti_alias;draw_fdf(data);};
+#define KCEX KC53 KC126 KC125 KC123 KC124 KC12 KC14 KC15 KC7 KC8
+#define IFDI01 if (DI < 0.1) DI = 0.1;
 #define FS FREE_SPLITS(fields, field_count)
 #define FSFEIII FS; fdf_error(3, line, fd, data)
 #define FSFEIV FS; fdf_error(4, line, fd, data)
@@ -52,16 +57,6 @@
 int		key_hook(int key_code, t_mapdata *data)
 {
 	KCEX;
-	if (key_code == 7)
-	{
-		data->display_interlace = !data->display_interlace;
-		draw_fdf(data);
-	}
-	if (key_code == 8)
-	{
-		data->anti_alias = !data->anti_alias;
-		draw_fdf(data);
-	}
 	if (key_code == 33)
 	{
 		if (DI > 15)
@@ -70,8 +65,7 @@ int		key_hook(int key_code, t_mapdata *data)
 			DI -= 1;
 		else
 			DI -= 0.1;
-		if (DI < 0.1)
-			DI = 0.1;
+		IFDI01;
 		draw_image(data);
 	}
 	if (key_code == 30)
