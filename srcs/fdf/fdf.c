@@ -26,6 +26,8 @@
 #define DG data->gamma
 #define DI data->increment
 #define DW data->window
+#define DSV data_set_value
+#define KCE key_code ==
 #define FS FREE_SPLITS(fields, field_count)
 #define FSFEIII FS; fdf_error(3, line, fd, data)
 #define FSFEIV FS; fdf_error(4, line, fd, data)
@@ -39,46 +41,26 @@
 
 int		key_hook(int key_code, t_mapdata *data)
 {
-	if (key_code == 53)
-	{
-		data_free(data);
-		exit(1);
-	}
-	if (key_code == 126)
-		data_set_value(data, &(DA), DA + DI);
-	if (key_code == 125)
-		data_set_value(data, &(DA), DA - DI);
-	if (key_code == 123)
-		data_set_value(data, &(DB), DB + DI);
-	if (key_code == 124)
-		data_set_value(data, &(DB), DB - DI);
-	if (key_code == 12)
-		data_set_value(data, &(DG), DG - DI);
-	if (key_code == 14)
-		data_set_value(data, &(DG), DG + DI);
-	if (key_code == 15)
-	{
-		DI = 4;
-		data_set_value(data, &(DA), 135);
-		data_set_value(data, &(DB), 25);
-		data_set_value(data, &(DG), 0);
-	}
-	if (key_code == 4)
-	{
-		DD = !DD;
-		draw_image(data);
-	}
-	if (key_code == 7)
+	if (KCE 53) {data_free(data);exit(1);}
+	if (KCE 126) DSV(data, &(DA), DA + DI);
+	if (KCE 125) DSV(data, &(DA), DA - DI);
+	if (KCE 123) DSV(data, &(DB), DB + DI);
+	if (KCE 124) DSV(data, &(DB), DB - DI);
+	if (KCE 12) DSV(data, &(DG), DG - DI);
+	if (KCE 14) DSV(data, &(DG), DG + DI);
+	if (KCE 15) {DI = 4;DSV(data, &(DA), 135);DSV(data, &(DB), 25);DSV(data, &(DG), 0);}
+	if (KCE 4) {DD = !DD;draw_image(data);}
+	if (KCE 7)
 	{
 		data->display_interlace = !data->display_interlace;
 		draw_fdf(data);
 	}
-	if (key_code == 8)
+	if (KCE 8)
 	{
 		data->anti_alias = !data->anti_alias;
 		draw_fdf(data);
 	}
-	if (key_code == 33)
+	if (KCE 33)
 	{
 		if (DI > 15)
 			DI -= 5;
@@ -90,7 +72,7 @@ int		key_hook(int key_code, t_mapdata *data)
 			DI = 0.1;
 		draw_image(data);
 	}
-	if (key_code == 30)
+	if (KCE 30)
 	{
 		if (DI >= 15)
 			DI += 5;
