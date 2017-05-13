@@ -66,8 +66,13 @@
 #define F float x_scale;float y_scale;float scale;float x_offset;float y_offset;
 #define FXMINMAX float x_min=2147483647; float x_max=-2147483648;
 #define FYMINMAX float y_min=2147483647; float y_max=-2147483648;
-#define IIDXXTILE int idx = 0; int x_tiles; t_point *point;t_arraylist *arr
-#define FXYSCALEOFFSETMINMAX F FXMINMAX FYMINMAX IIDXXTILE
+#define IDXXTILE int idx = -1; int x_tiles; t_point *point;t_arraylist *arr
+#define PSX point->screen_x
+#define PSY point->screen_y
+#define PSXMM if (PSX > x_max) x_max = PSX;if (PSX < x_min) x_min = PSX;
+#define PSYMM if (PSY > y_max) y_max = PSY;if (PSY < y_min) y_min = PSY;
+#define WHPS while (++idx < arr->size) {point = arr->data[idx]; PSXMM; PSYMM;}
+#define FXYSCALEOFFSETMINMAX F FXMINMAX FYMINMAX IDXXTILE; arr = data->arr; WHPS
 #define DLFLOATS float hsb[3];float dx;float dy;float gradient;float y;
 #define DLINTS int did_swap;int max_x;int start;int x;int color;
 #define DLPARAMS char steep; DLFLOATS DLINTS float b_cache;
@@ -222,20 +227,6 @@ void	mem_swap(void *a, void *b, size_t size)
 void	draw_fdf(t_mapdata *data)
 {
 	FXYSCALEOFFSETMINMAX;
-	arr = data->arr;
-	while (idx < arr->size)
-	{
-		point = arr->data[idx];
-		if (point->screen_x > x_max)
-			x_max = point->screen_x;
-		if (point->screen_x < x_min)
-			x_min = point->screen_x;
-		if (point->screen_y > y_max)
-			y_max = point->screen_y;
-		if (point->screen_y < y_min)
-			y_min = point->screen_y;
-		idx++;
-	}
 	x_scale = 1 / (x_max - x_min) * 0.95;
 	y_scale = (1 / (y_max - y_min)) * 0.95;
 	scale = MIN(x_scale, y_scale);
@@ -243,33 +234,20 @@ void	draw_fdf(t_mapdata *data)
 	y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
 	draw_background(data);
 	x_tiles = DX;
-	idx = 0;
-	#define PNT_X(idx) ((PNT(idx)->screen_x - x_min) * scale) + x_offset
-	#define PNT_Y(idx) ((PNT(idx)->screen_y - y_min) * scale) + y_offset
-	#define PNT_XY(idx) (float[]){PNT_X(idx), PNT_Y(idx)}
-
-	while (idx < arr->size - 1)
+	idx = -1;
+	while (++idx < arr->size - 1)
 	{
 		if (idx + x_tiles < arr->size)
-		{
 			draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles), PNT(idx)->hsb, PNT(idx + x_tiles)->hsb);
-		}
 		if (idx % x_tiles != x_tiles - 1)
 		{
 			if (DDI && idx + x_tiles + 1 < arr->size)
-			{
 				draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles + 1), PNT(idx)->hsb, PNT(idx + x_tiles + 1)->hsb);
-			}
-			draw_line(data, PNT_XY(idx), PNT_XY(idx + 1) , PNT(idx)->hsb, PNT(idx + 1)->hsb);
+			draw_line(data, PNT_XY(idx), PNT_XY(idx + 1), PNT(idx)->hsb, PNT(idx + 1)->hsb);
 		}
 		if (idx % x_tiles != 0)
-		{
 			if (DDI && idx + x_tiles - 1 < arr->size)
-			{
 				draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles - 1), ((t_point *)arr->data[idx])->hsb, PNT(idx + x_tiles - 1)->hsb);
-			}
-		}
-		idx++;
 	}
 	draw_image(data);
 }
