@@ -33,6 +33,10 @@
 #define FYMINMAX float y_min=2147483647; float y_max=-2147483648;
 #define IIDXXTILE int idx = 0; int x_tiles; t_point *point;t_arraylist *arr
 #define FXYSCALEOFFSETMINMAX F FXMINMAX FYMINMAX IIDXXTILE
+#define DLFLOATS float hsbvals[3];float dx;float dy;float gradient;float y;
+#define DLINTS int did_swap;int max_x;int start;int x;int color;
+#define DLPARAMS char steep; DLFLOATS DLINTS float b_cache;
+
 #define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
 
 char	*ft_ftoa(float f)
@@ -46,8 +50,9 @@ char	*ft_ftoa(float f)
 void	draw_stats(t_mapdata *data)
 {
 	void	*cache[10];
-	int		y = -15;
+	int		y;
 
+	y = -15;
 	if (data->draw_stats)
 	{
 		mlx_string_put(DMLXW5, Y15, HXF, "Stats");
@@ -104,17 +109,7 @@ void	draw_pixel(t_windata *data, int x, int y, int color)
 
 void	draw_line(t_mapdata *data, ABCOLOR)
 {
-	float	hsbvals[3];
-	char	steep;
-	int did_swap;
-	float dx;
-	float dy;
-	float gradient;
-	float y;
-	int max_x;
-	int start;
-	int x;
-
+	DLPARAMS;
 	steep = ABS(b[1] - a[1]) > ABS(b[0] - a[0]);
 	did_swap = 0;
 	if (steep)
@@ -122,7 +117,8 @@ void	draw_line(t_mapdata *data, ABCOLOR)
 		mem_swap(a, a + 1, sizeof(*a));
 		mem_swap(b, b + 1, sizeof(*a));
 	}
-	if (a[0] > b[0]) 	{
+	if (a[0] > b[0])
+	{
 		mem_swap(a, b, 2 * sizeof(float));
 		did_swap = 1;
 	}
@@ -136,39 +132,25 @@ void	draw_line(t_mapdata *data, ABCOLOR)
 	while (x < max_x)
 	{
 		if (did_swap)
-		{
-			hsb_lerp(color_b, color_a, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
-		}
+			hsb_lerp(color_b, color_a, (float)(x - start) / (float)(max_x - start - 1), &(hsbvals[0]));
 		else
-		{
-			hsb_lerp(color_a, color_b, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
-		}
-		float b_cache = hsbvals[2];
-		int color;
+			hsb_lerp(color_a, color_b, (float)(x - start) / (float)(max_x - start - 1), &(hsbvals[0]));
+		b_cache = hsbvals[2];
 		if (data->anti_alias)
 		{
 			hsbvals[2] = lerp(0, b_cache, y - (int)y);
 			color = hsb2rgb(hsbvals);
 			if (steep)
-			{
 				draw_pixel(data->window, y + 1, x, color);
-			}
 			else
-			{
 				draw_pixel(data->window, x, y + 1, color);
-			}
 			hsbvals[2] = lerp(0, b_cache, 1 - (y - (int)y));
 		}
 		color = hsb2rgb(hsbvals);
 		if (steep)
-		{
 			draw_pixel(data->window, y, x, color);
-		}
 		else
-		{
 			draw_pixel(data->window, x, y, color);
-		}
-
 		y += gradient;
 		x++;
 	}
@@ -224,7 +206,7 @@ void	draw_fdf(t_mapdata *data)
 	}
 	x_scale = 1 / (x_max - x_min) * 0.95;
 	y_scale = (1 / (y_max - y_min)) * 0.95;
-	scale = MIN(x_scale,y_scale);
+	scale = MIN(x_scale, y_scale);
 	x_offset = (1 - ((x_max - x_min) * scale)) * 0.5;
 	y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
 	draw_background(data);
