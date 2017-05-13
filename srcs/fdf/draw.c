@@ -29,7 +29,7 @@ void	draw_stats(t_mapdata *data) {
 		mlx_string_put(data->window->mlx, data->window->win, 5, y += 15, 0xFFFFFF, "Stats");
 		mlx_string_put(data->window->mlx, data->window->win, 5, y += 15, 0xFFFFFF, "-------------------");
 		mlx_string_put(data->window->mlx, data->window->win, 5, y += 15, 0xFFFFFF, cache[0] = ft_strjoin("Vertex Count: ", cache[1] = ft_itoa(data->arr->size)));
-		FREE_CACHE
+		FREE_CACHE;
 		mlx_string_put(data->window->mlx, data->window->win, 5, y += 15, 0xFFFFFF, cache[0] = ft_strjoin("Line Count: ", cache[1] = ft_itoa( ((data->display_interlace) ? ((data->x_size - 1) * (data->arr->size / data->x_size - 1) * 4) + (data->x_size - 1) + (data->arr->size / data->x_size - 1) : ((data->x_size - 1) * (data->arr->size / data->x_size - 1) * 2) + (data->x_size - 1) + (data->arr->size / data->x_size - 1) ))));
 		FREE_CACHE;
 
