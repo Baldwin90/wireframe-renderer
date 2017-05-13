@@ -25,6 +25,12 @@
 #define AAE "Anti-Aliasing: ENABLED"
 #define AAD "Anti-Aliasing: DISABLED"
 #define Y15 y += 15
+#define CFF cache[1] = ft_ftoa
+#define SJ ft_strjoin
+#define F float x_scale;float y_scale;float scale;float x_offset;float y_offset;
+#define FXMINMAX float x_min=2147483647; float x_max=-2147483648;
+#define FYMINMAX float y_min=2147483647; float y_max=-2147483648;
+#define FXYSCALEOFFSETMINMAX F FXMINMAX FYMINMAX
 #define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
 
 char	*ft_ftoa(float f)
@@ -42,20 +48,20 @@ void	draw_stats(t_mapdata *data)
 	{
 		mlx_string_put(DMLXW5, Y15, HXF, "Stats");
 		mlx_string_put(DMLXW5, Y15, HXF, "-------------------");
-		mlx_string_put(DMLXW5, Y15, HXF, cache[0] = ft_strjoin("Vertex Count: ", cache[1] = ft_itoa(data->arr->size)));
+		mlx_string_put(DMLXW5, Y15, HXF, cache[0] = SJ("Vertex Count: ", cache[1] = ft_itoa(data->arr->size)));
 		FREE_CACHE;
-		mlx_string_put(DMLXW5, Y15, HXF, cache[0] = ft_strjoin("Line Count: ", cache[1] = ft_itoa( ((data->display_interlace) ? ((data->x_size - 1) * (data->arr->size / data->x_size - 1) * 4) + (data->x_size - 1) + (data->arr->size / data->x_size - 1) : ((data->x_size - 1) * (data->arr->size / data->x_size - 1) * 2) + (data->x_size - 1) + (data->arr->size / data->x_size - 1) ))));
+		mlx_string_put(DMLXW5, Y15, HXF, cache[0] = SJ("Line Count: ", cache[1] = ft_itoa( ((data->display_interlace) ? ((data->x_size - 1) * (data->arr->size / data->x_size - 1) * 4) + (data->x_size - 1) + (data->arr->size / data->x_size - 1) : ((data->x_size - 1) * (data->arr->size / data->x_size - 1) * 2) + (data->x_size - 1) + (data->arr->size / data->x_size - 1) ))));
 		FREE_CACHE;
 		mlx_string_put(DMLXW5, Y15, HXF, data->display_interlace ? IE : ID);
 		mlx_string_put(DMLXW5, Y15, HXF, data->anti_alias ? AAE : AAD);
 		mlx_string_put(DMLXW5, Y15, HXF, "Rotation (in degrees):");
-		mlx_string_put(DYH, cache[0] = ft_strjoin("Increment: ", cache[1] = ft_ftoa(data->increment)));
+		mlx_string_put(DYH, cache[0] = SJ("Increment: ", CFF(data->increment)));
 		FREE_CACHE;
-		mlx_string_put(DYH, cache[0] = ft_strjoin("Alpha: ", cache[1] = ft_ftoa(data->alpha)));
+		mlx_string_put(DYH, cache[0] = SJ("Alpha: ", CFF(data->alpha)));
 		FREE_CACHE;
-		mlx_string_put(DYH, cache[0] = ft_strjoin("Beta: ", cache[1] = ft_ftoa(data->beta)));
+		mlx_string_put(DYH, cache[0] = SJ("Beta: ", CFF(data->beta)));
 		FREE_CACHE;
-		mlx_string_put(DYH, cache[0] = ft_strjoin("Gamma: ", cache[1] = ft_ftoa(data->gamma)));
+		mlx_string_put(DYH, cache[0] = SJ("Gamma: ", CFF(data->gamma)));
 		FREE_CACHE;
 		mlx_string_put(DMLXW5, y += 35, HXF, "Key Bindings");
 		mlx_string_put(DMLXW5, Y15, HXF, "-------------------");
@@ -77,7 +83,7 @@ void	draw_stats(t_mapdata *data)
 		mlx_string_put(DMLXW5, Y15, 0x515151, "Stats Hidden... Press 'H' to show.");
 }
 
-int	draw_image(t_mapdata *data)
+int		draw_image(t_mapdata *data)
 {
 	mlx_clear_window(DWMLX, DWW);
 	mlx_put_image_to_window(DWMLX, DWW, data->window->img, 0, 0);
@@ -115,9 +121,10 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 	int max_x = (int)(b[0] * SCREENSIZE);
 	int start = (int)(a[0] * SCREENSIZE);
 
-	for (int x = start; x < max_x; x++) 	{
-		if (did_swap)
+	for (int x = start; x < max_x; x++)
 	{
+		if (did_swap)
+		{
 			hsb_lerp(color_b, color_a, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
 		} else {
 			hsb_lerp(color_a, color_b, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
@@ -125,11 +132,11 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 		float b_cache = hsbvals[2];
 		int color;
 		if (data->anti_alias)
-	{
+		{
 			hsbvals[2] = lerp(0, b_cache, y - (int)y);
 			color = hsb2rgb(hsbvals);
 			if (steep)
-		{
+			{
 				draw_pixel(data->window, y + 1, x, color);
 			} else {
 				draw_pixel(data->window, x, y + 1, color);
@@ -138,7 +145,7 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 		}
 		color = hsb2rgb(hsbvals);
 		if (steep)
-	{
+		{
 			draw_pixel(data->window, y, x, color);
 		} else {
 			draw_pixel(data->window, x, y, color);
@@ -148,9 +155,10 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 	}
 }
 
-void draw_background(t_mapdata *data)
+void	draw_background(t_mapdata *data)
 {
-	for (int i = 0; i < SCREENSIZE * SCREENSIZE; i++) 	{
+	for (int i = 0; i < SCREENSIZE * SCREENSIZE; i++)
+	{
 		((int *)data->window->pixel)[i] = data->background;
 	}
 }
@@ -163,16 +171,17 @@ void	mem_swap(void *a, void *b, size_t size)
 
 	a_mem = a;
 	b_mem = b;
-	for (unsigned long i = 0; i < size; i++) 	{
+	for (unsigned long i = 0; i < size; i++)
+	{
 		cache = a_mem[i];
 		a_mem[i] = b_mem[i];
 		b_mem[i] = cache;
 	}
 }
 
-void draw_fdf(t_mapdata *data)
+void	draw_fdf(t_mapdata *data)
 {
-	float x_min=2147483647, x_max=-2147483648, y_min=2147483647, y_max=-2147483648;
+	FXYSCALEOFFSETMINMAX;
 	t_point *point;
 	t_arraylist *arr = data->arr;
 	for (int idx = 0; idx < arr->size; idx++) 	{
@@ -194,11 +203,11 @@ void draw_fdf(t_mapdata *data)
 			y_min = point->screen_y;
 		}
 	}
-	float x_scale = 1 / (x_max - x_min) * 0.95;
-	float y_scale = (1 / (y_max - y_min)) * 0.95;
-	float scale = MIN(x_scale,y_scale);
-	float x_offset = (1 - ((x_max - x_min) * scale)) * 0.5;
-	float y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
+	x_scale = 1 / (x_max - x_min) * 0.95;
+	y_scale = (1 / (y_max - y_min)) * 0.95;
+	scale = MIN(x_scale,y_scale);
+	x_offset = (1 - ((x_max - x_min) * scale)) * 0.5;
+	y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
 	draw_background(data);
 	int x_tiles = data->x_size;
 	for (int idx = 0; idx < arr->size - 1; idx++) 	{
