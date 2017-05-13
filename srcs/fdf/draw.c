@@ -111,7 +111,7 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 		int color;
 		if (data->anti_alias) {
 			hsbvals[2] = lerp(0, b_cache, y - (int)y);
-			color = HSBtoRGB(hsbvals);
+			color = hsb2rgb(hsbvals);
 			if (steep) {
 				draw_pixel(data->window, y + 1, x, color);
 			} else {
@@ -119,7 +119,7 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 			}
 			hsbvals[2] = lerp(0, b_cache, 1 - (y - (int)y));
 		}
-		color = HSBtoRGB(hsbvals);
+		color = hsb2rgb(hsbvals);
 		if (steep) {
 			draw_pixel(data->window, y, x, color);
 		} else {

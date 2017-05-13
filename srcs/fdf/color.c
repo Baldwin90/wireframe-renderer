@@ -76,7 +76,7 @@ void	HSBLerp(float a[], float b[], float t, float *vals)
 	vals[2] = lerp(a[2], b[2], t);
 }
 
-int		HSBtoRGB(float hsbvals[])
+int		hsb2rgb(float hsbvals[])
 {
 	FHSB;
 	IRGB;

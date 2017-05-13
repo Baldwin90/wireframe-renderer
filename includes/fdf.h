@@ -55,7 +55,7 @@ void			data_free(t_mapdata *data);
 float			lerp_angle(float a, float b, float t);
 float			lerp(float a, float b, float t);
 void			HSBLerp(float a[], float b[], float t, float *vals);
-int				HSBtoRGB(float hsbvals[]);
+int				hsb2rgb(float hsbvals[]);
 void			rgb2hsb(int r, int g, int b, float *vals);
 char			*ft_ftoa(float f);
 void			draw_stats(t_mapdata *data);
