@@ -42,6 +42,8 @@
 #define DLFLOATS float hsbvals[3];float dx;float dy;float gradient;float y;
 #define DLINTS int did_swap;int max_x;int start;int x;int color;
 #define DLPARAMS char steep; DLFLOATS DLINTS float b_cache;
+#define CSJ cache[0] = SJ
+#define MAT cache[1]=ft_itoa((DDI?(DX1*DDX1*4)+DX1+DDX1:(DX1*DDX1*2)+DX1+DDX1)))
 #define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
 
 char	*ft_ftoa(float f)
@@ -62,20 +64,20 @@ void	draw_stats(t_mapdata *data)
 	{
 		mlx_string_put(D5YH, "Stats");
 		mlx_string_put(D5YH, "-------------------");
-		mlx_string_put(D5YH, cache[0] = SJ("Vertex Count: ", cache[1] = ft_itoa(DAS)));
+		mlx_string_put(D5YH, CSJ("Vertex Count: ", cache[1] = ft_itoa(DAS)));
 		FREE_CACHE;
-		mlx_string_put(D5YH, cache[0] = SJ("Line Count: ", cache[1] = ft_itoa((DDI ? (DX1 * DDX1 * 4) + DX1 + DDX1 : (DX1 * DDX1 * 2) + DX1 + DDX1 ))));
+		mlx_string_put(D5YH, CSJ("Line Count: ", MAT);
 		FREE_CACHE;
 		mlx_string_put(D5YH, DDI ? IE : ID);
 		mlx_string_put(D5YH, data->anti_alias ? AAE : AAD);
 		mlx_string_put(D5YH, "Rotation (in degrees):");
-		mlx_string_put(D20YH, cache[0] = SJ("Increment: ", CFF(data->increment)));
+		mlx_string_put(D20YH, CSJ("Increment: ", CFF(data->increment)));
 		FREE_CACHE;
-		mlx_string_put(D20YH, cache[0] = SJ("Alpha: ", CFF(data->alpha)));
+		mlx_string_put(D20YH, CSJ("Alpha: ", CFF(data->alpha)));
 		FREE_CACHE;
-		mlx_string_put(D20YH, cache[0] = SJ("Beta: ", CFF(data->beta)));
+		mlx_string_put(D20YH, CSJ("Beta: ", CFF(data->beta)));
 		FREE_CACHE;
-		mlx_string_put(D20YH, cache[0] = SJ("Gamma: ", CFF(data->gamma)));
+		mlx_string_put(D20YH, CSJ("Gamma: ", CFF(data->gamma)));
 		FREE_CACHE;
 		mlx_string_put(DMLXW5, y += 35, HXF, "Key Bindings");
 		mlx_string_put(D5YH, "-------------------");
