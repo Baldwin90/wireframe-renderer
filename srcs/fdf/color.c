@@ -19,8 +19,9 @@
 #define FHSB float hue; float saturation; float brightness;
 #define FRGBC float redc; float greenc; float bluec;
 #define FHFPQT float h; float f; float p; float q; float t;
-#define IRGB int r; int g; int b;
+#define IRGB int r = 0; int g = 0; int b = 0;
 #define ICMAXMIN int cmax; int cmin;
+#define RGB r = g = b
 
 float	lerp_angle(float a, float b, float t)
 {
@@ -67,9 +68,9 @@ void	hsb_lerp(float a[], float b[], float t, float *vals)
 				angle += 360.0f;
 			while (angle > 360.0f)
 				angle -= 360.0f;
-			h = angle/360.0f;
+			h = angle / 360.0f;
 		}
-		s = lerp(a[1],b[1],t);
+		s = lerp(a[1], b[1], t);
 	}
 	vals[0] = h;
 	vals[1] = s;
@@ -84,13 +85,8 @@ int		hsb2rgb(float hsbvals[])
 	hue = hsbvals[0];
 	saturation = hsbvals[1];
 	brightness = hsbvals[2];
-	r = 0;
-	g = 0;
-	b = 0;
 	if (saturation == 0)
-	{
-		r = g = b = (int)(brightness * 255.0f + 0.5f);
-	}
+		RGB = (int)(brightness * 255.0f + 0.5f);
 	else
 	{
 		h = (hue - (float)floor(hue)) * 6.0f;
@@ -98,38 +94,41 @@ int		hsb2rgb(float hsbvals[])
 		p = brightness * (1.0f - saturation);
 		q = brightness * (1.0f - saturation * f);
 		t = brightness * (1.0f - (saturation * (1.0f - f)));
-		switch ((int)h)
+		if ((int)h == 0)
 		{
-		case 0:
 			r = (int)(brightness * 255.0f + 0.5f);
 			g = (int)(t * 255.0f + 0.5f);
 			b = (int)(p * 255.0f + 0.5f);
-			break ;
-		case 1:
+		}
+		else if ((int)h == 1)
+		{
 			r = (int)(q * 255.0f + 0.5f);
 			g = (int)(brightness * 255.0f + 0.5f);
 			b = (int)(p * 255.0f + 0.5f);
-			break ;
-		case 2:
+		}
+		else if ((int)h == 2)
+		{
 			r = (int)(p * 255.0f + 0.5f);
 			g = (int)(brightness * 255.0f + 0.5f);
 			b = (int)(t * 255.0f + 0.5f);
-			break ;
-		case 3:
+		}
+		else if ((int)h == 3)
+		{
 			r = (int)(p * 255.0f + 0.5f);
 			g = (int)(q * 255.0f + 0.5f);
 			b = (int)(brightness * 255.0f + 0.5f);
-			break ;
-		case 4:
+		}
+		else if ((int)h == 4)
+		{
 			r = (int)(t * 255.0f + 0.5f);
 			g = (int)(p * 255.0f + 0.5f);
 			b = (int)(brightness * 255.0f + 0.5f);
-			break ;
-		case 5:
+		}
+		else if ((int)h == 5)
+		{
 			r = (int)(brightness * 255.0f + 0.5f);
 			g = (int)(p * 255.0f + 0.5f);
 			b = (int)(q * 255.0f + 0.5f);
-			break ;
 		}
 	}
 	return ((r << 16) | (g << 8) | (b << 0));
