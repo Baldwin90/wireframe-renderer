@@ -20,7 +20,7 @@
 #define FRGBC float redc; float greenc; float bluec;
 #define FHFPQT float h; float f; float p; float q; float t;
 #define IRGB int r; int g; int b;
-#define CMAXMIN int cmax; int cmin;
+#define ICMAXMIN int cmax; int cmin;
 
 float	lerp_angle(float a, float b, float t)
 {
@@ -139,17 +139,15 @@ void	RGBtoHSB(int r, int g, int b, float *vals)
 {
 	FHSB;
 	FRGBC;
-	CMAXMIN;
+	ICMAXMIN;
 	cmax = (r > g) ? r : g;
-	if (b > cmax) cmax = b;
+	if (b > cmax)
+		cmax = b;
 	cmin = (r < g) ? r : g;
-	if (b < cmin) cmin = b;
-
+	if (b < cmin)
+		cmin = b;
 	brightness = ((float)cmax) / 255.0f;
-	if (cmax != 0)
-		saturation = ((float)(cmax - cmin)) / ((float)cmax);
-	else
-		saturation = 0;
+	saturation = ( cmax != 0 ? ((float)(cmax - cmin)) / ((float)cmax) : 0);
 	if (saturation == 0)
 		hue = 0;
 	else {
