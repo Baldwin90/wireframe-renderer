@@ -38,6 +38,9 @@
 #define RGB2HSB FHSB; FRGBC; ICMAXMIN; CMINMAX;
 #define VAL_ARRAY1 vals[0] = h;vals[1] = s;vals[2] = lerp(a[2], b[2], t);
 #define VAL_ARRAY2 vals[0] = hue; vals[1] = saturation; vals[2] = brightness;
+#define WHILE1 while (angle < 0.0f) angle += 360.0f;
+#define WHILE2 while (angle > 360.0f) angle -= 360.0f;
+#define WHILEH WHILE1;WHILE2;h = angle / 360.0f;
 
 float	lerp_angle(float a, float b, float t)
 {
@@ -76,11 +79,7 @@ void	hsb_lerp(float a[], float b[], float t, float *vals)
 		else
 		{
 			angle = lerp_angle(a[0] * 360.0f, b[0] * 360.0f, t);
-			while (angle < 0.0f)
-				angle += 360.0f;
-			while (angle > 360.0f)
-				angle -= 360.0f;
-			h = angle / 360.0f;
+			WHILEH;
 		}
 		s = lerp(a[1], b[1], t);
 	}
