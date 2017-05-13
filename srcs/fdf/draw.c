@@ -24,6 +24,7 @@
 #define ID "Interlacing: DISABLED"
 #define AAE "Anti-Aliasing: ENABLED"
 #define AAD "Anti-Aliasing: DISABLED"
+#define HIDDEN_STATS "Stats Hidden... Press 'H' to show."
 #define Y15 y += 15
 #define CFF cache[1] = ft_ftoa
 #define SJ ft_strjoin
@@ -36,7 +37,8 @@
 char	*ft_ftoa(float f)
 {
 	char	buf[48];
-	snprintf (buf, sizeof(buf), "%.2f", f);
+
+	snprintf(buf, sizeof(buf), "%.2f", f);
 	return (ft_strdup(buf));
 }
 
@@ -44,6 +46,7 @@ void	draw_stats(t_mapdata *data)
 {
 	void	*cache[10];
 	int		y = -15;
+
 	if (data->draw_stats)
 	{
 		mlx_string_put(DMLXW5, Y15, HXF, "Stats");
@@ -80,7 +83,7 @@ void	draw_stats(t_mapdata *data)
 		mlx_string_put(DMLXW5, Y15, HXF, "Quit: 'esc'");
 	}
 	else
-		mlx_string_put(DMLXW5, Y15, 0x515151, "Stats Hidden... Press 'H' to show.");
+		mlx_string_put(DMLXW5, Y15, 0x515151, HIDDEN_STATS);
 }
 
 int		draw_image(t_mapdata *data)
@@ -98,7 +101,7 @@ void	draw_pixel(t_windata *data, int x, int y, int color)
 	*((int *)(data->pixel + ((x + y * SCREENSIZE) * data->bpp))) = color;
 }
 
-void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float color_b[])
+void	draw_line(t_mapdata *data, ABCOLOR)
 {
 	float	hsbvals[3];
 	char	steep;
@@ -126,7 +129,9 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 		if (did_swap)
 		{
 			hsb_lerp(color_b, color_a, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
-		} else {
+		}
+		else
+		{
 			hsb_lerp(color_a, color_b, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
 		}
 		float b_cache = hsbvals[2];
@@ -138,7 +143,9 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 			if (steep)
 			{
 				draw_pixel(data->window, y + 1, x, color);
-			} else {
+			}
+			else
+			{
 				draw_pixel(data->window, x, y + 1, color);
 			}
 			hsbvals[2] = lerp(0, b_cache, 1 - (y - (int)y));
@@ -147,7 +154,9 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 		if (steep)
 		{
 			draw_pixel(data->window, y, x, color);
-		} else {
+		}
+		else
+		{
 			draw_pixel(data->window, x, y, color);
 		}
 
@@ -210,7 +219,8 @@ void	draw_fdf(t_mapdata *data)
 	y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
 	draw_background(data);
 	int x_tiles = data->x_size;
-	for (int idx = 0; idx < arr->size - 1; idx++) 	{
+	for (int idx = 0; idx < arr->size - 1; idx++)
+	{
 		if (idx + x_tiles < arr->size)
 		{
 			draw_line(data, (float[]){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float[]){((((t_point *)arr->data[idx + x_tiles])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles])->hsb);
@@ -225,7 +235,7 @@ void	draw_fdf(t_mapdata *data)
 		}
 		if (idx % x_tiles != 0)
 		{
-			if (data->display_interlace && idx + x_tiles - 1< arr->size)
+			if (data->display_interlace && idx + x_tiles - 1 < arr->size)
 			{
 				draw_line(data, (float[]){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float[]){((((t_point *)arr->data[idx + x_tiles - 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles - 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles - 1])->hsb);
 			}
