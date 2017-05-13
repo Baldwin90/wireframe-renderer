@@ -92,6 +92,7 @@
 #define PNT_X(idx) ((PNT(idx)->screen_x - x_min) * scale) + x_offset
 #define PNT_Y(idx) ((PNT(idx)->screen_y - y_min) * scale) + y_offset
 #define PNT_XY(idx) (float[]){PNT_X(idx), PNT_Y(idx)}
+#define XY_PNT(i0,i1) PNT_XY(i0), PNT_XY(i1), PNT(i0)->hsb, PNT(i1)->hsb
 
 char	*ft_ftoa(float f)
 {
@@ -238,16 +239,16 @@ void	draw_fdf(t_mapdata *data)
 	while (++idx < arr->size - 1)
 	{
 		if (idx + x_tiles < arr->size)
-			draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles), PNT(idx)->hsb, PNT(idx + x_tiles)->hsb);
+			draw_line(data, XY_PNT(idx,idx + x_tiles));
 		if (idx % x_tiles != x_tiles - 1)
 		{
 			if (DDI && idx + x_tiles + 1 < arr->size)
-				draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles + 1), PNT(idx)->hsb, PNT(idx + x_tiles + 1)->hsb);
-			draw_line(data, PNT_XY(idx), PNT_XY(idx + 1), PNT(idx)->hsb, PNT(idx + 1)->hsb);
+				draw_line(data, XY_PNT(idx,idx + x_tiles + 1));
+			draw_line(data, XY_PNT(idx,idx + 1));
 		}
 		if (idx % x_tiles != 0)
 			if (DDI && idx + x_tiles - 1 < arr->size)
-				draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles - 1), ((t_point *)arr->data[idx])->hsb, PNT(idx + x_tiles - 1)->hsb);
+				draw_line(data, XY_PNT(idx,idx + x_tiles - 1));
 	}
 	draw_image(data);
 }
