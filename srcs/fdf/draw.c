@@ -68,13 +68,14 @@
 #define FYMINMAX float y_min=2147483647; float y_max=-2147483648;
 #define IIDXXTILE int idx = 0; int x_tiles; t_point *point;t_arraylist *arr
 #define FXYSCALEOFFSETMINMAX F FXMINMAX FYMINMAX IIDXXTILE
-#define DLFLOATS float hsbvals[3];float dx;float dy;float gradient;float y;
+#define DLFLOATS float hsb[3];float dx;float dy;float gradient;float y;
 #define DLINTS int did_swap;int max_x;int start;int x;int color;
 #define DLPARAMS char steep; DLFLOATS DLINTS float b_cache;
 #define DSVAR void *cache[10];int y = -15;
 #define CSJ cache[0] = SJ
 #define MAT cache[1]=ft_itoa((DDI?(DX1*DDX1*4)+DX1+DDX1:(DX1*DDX1*2)+DX1+DDX1))
 #define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
+#define FXS (float)(x - start)
 #define MSP mlx_string_put
 #define MSP1011 MSP(D5YH, T10);MSP(D5YH, T11);
 #define MSP1215 MSP(D5YH, T12);MSP(D5YH, T13);MSP(D5YH, T14);MSP(D5YH, T15);
@@ -82,6 +83,10 @@
 #define MSP2023 MSP(D5YH, T20);MSP(D5YH, T21);MSP(D5YH, T22);MSP(D5YH, T23);
 #define MSP10UP MSP1011 MSP1215 MSP1619 MSP2023
 #define MSPFREE(code) mlx_string_put(code); FREE_CACHE
+#define PNT(x) ((t_point *)arr->data[(x)])
+#define PNT_X(idx) ((PNT(idx)->screen_x - x_min) * scale) + x_offset
+#define PNT_Y(idx) ((PNT(idx)->screen_y - y_min) * scale) + y_offset
+#define PNT_XY(idx) (float[]){PNT_X(idx), PNT_Y(idx)}
 
 char	*ft_ftoa(float f)
 {
@@ -134,7 +139,7 @@ void	draw_pixel(t_windata *data, int x, int y, int color)
 	*((int *)(data->pixel + ((x + y * SCREENSIZE) * data->bpp))) = color;
 }
 
-void	draw_line(t_mapdata *data, ABCOLOR color_b[])
+void	draw_line(t_mapdata *data, ABCOLOR cb[])
 {
 	DLPARAMS;
 	steep = ABS(b[1] - a[1]) > ABS(b[0] - a[0]);
@@ -159,21 +164,21 @@ void	draw_line(t_mapdata *data, ABCOLOR color_b[])
 	while (x < max_x)
 	{
 		if (did_swap)
-			hsb_lerp(color_b, color_a, (float)(x - start) / (float)(max_x - start - 1), &(hsbvals[0]));
+			hsb_lerp(cb, ca, FXS / (float)(max_x - start - 1), &(hsb[0]));
 		else
-			hsb_lerp(color_a, color_b, (float)(x - start) / (float)(max_x - start - 1), &(hsbvals[0]));
-		b_cache = hsbvals[2];
+			hsb_lerp(ca, cb, FXS / (float)(max_x - start - 1), &(hsb[0]));
+		b_cache = hsb[2];
 		if (data->anti_alias)
 		{
-			hsbvals[2] = lerp(0, b_cache, y - (int)y);
-			color = hsb2rgb(hsbvals);
+			hsb[2] = lerp(0, b_cache, y - (int)y);
+			color = hsb2rgb(hsb);
 			if (steep)
 				draw_pixel(data->window, y + 1, x, color);
 			else
 				draw_pixel(data->window, x, y + 1, color);
-			hsbvals[2] = lerp(0, b_cache, 1 - (y - (int)y));
+			hsb[2] = lerp(0, b_cache, 1 - (y - (int)y));
 		}
-		color = hsb2rgb(hsbvals);
+		color = hsb2rgb(hsb);
 		if (steep)
 			draw_pixel(data->window, y, x, color);
 		else
@@ -239,25 +244,29 @@ void	draw_fdf(t_mapdata *data)
 	draw_background(data);
 	x_tiles = DX;
 	idx = 0;
+	#define PNT_X(idx) ((PNT(idx)->screen_x - x_min) * scale) + x_offset
+	#define PNT_Y(idx) ((PNT(idx)->screen_y - y_min) * scale) + y_offset
+	#define PNT_XY(idx) (float[]){PNT_X(idx), PNT_Y(idx)}
+
 	while (idx < arr->size - 1)
 	{
 		if (idx + x_tiles < arr->size)
 		{
-			draw_line(data, (float[]){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float[]){((((t_point *)arr->data[idx + x_tiles])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles])->hsb);
+			draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles), PNT(idx)->hsb, PNT(idx + x_tiles)->hsb);
 		}
 		if (idx % x_tiles != x_tiles - 1)
 		{
 			if (DDI && idx + x_tiles + 1 < arr->size)
 			{
-				draw_line(data, (float[]){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float[]){((((t_point *)arr->data[idx + x_tiles + 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles + 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles + 1])->hsb);
+				draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles + 1), PNT(idx)->hsb, PNT(idx + x_tiles + 1)->hsb);
 			}
-			draw_line(data, (float[]){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float[]){((((t_point *)arr->data[idx + 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + 1])->hsb);
+			draw_line(data, PNT_XY(idx), PNT_XY(idx + 1) , PNT(idx)->hsb, PNT(idx + 1)->hsb);
 		}
 		if (idx % x_tiles != 0)
 		{
 			if (DDI && idx + x_tiles - 1 < arr->size)
 			{
-				draw_line(data, (float[]){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float[]){((((t_point *)arr->data[idx + x_tiles - 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles - 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles - 1])->hsb);
+				draw_line(data, PNT_XY(idx), PNT_XY(idx + x_tiles - 1), ((t_point *)arr->data[idx])->hsb, PNT(idx + x_tiles - 1)->hsb);
 			}
 		}
 		idx++;
