@@ -135,7 +135,7 @@ int		HSBtoRGB(float hsbvals[])
 	return ((r << 16) | (g << 8) | (b << 0));
 }
 
-void	RGBtoHSB(int r, int g, int b, float *vals)
+void	rgb2hsb(int r, int g, int b, float *vals)
 {
 	FHSB;
 	FRGBC;
@@ -147,10 +147,11 @@ void	RGBtoHSB(int r, int g, int b, float *vals)
 	if (b < cmin)
 		cmin = b;
 	brightness = ((float)cmax) / 255.0f;
-	saturation = ( cmax != 0 ? ((float)(cmax - cmin)) / ((float)cmax) : 0);
+	saturation = (cmax != 0 ? ((float)(cmax - cmin)) / ((float)cmax) : 0);
 	if (saturation == 0)
 		hue = 0;
-	else {
+	else
+	{
 		redc = ((float)(cmax - r)) / ((float)(cmax - cmin));
 		greenc = ((float)(cmax - g)) / ((float)(cmax - cmin));
 		bluec = ((float)(cmax - b)) / ((float)(cmax - cmin));

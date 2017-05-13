@@ -131,7 +131,7 @@ int		create_point(t_mapdata *data, char **fields, int field_count, int z)
 			{
 				FSRE;
 			}
-			RGBtoHSB(RV >> 16, (RV & 0xFF00) >> 8, RV & 0xFF, hsbvals);
+			rgb2hsb(RV >> 16, (RV & 0xFF00) >> 8, RV & 0xFF, hsbvals);
 			DAP(data, (float[]){x, ft_atoi(point[0]), z}, hsbvals);
 		}
 		else
