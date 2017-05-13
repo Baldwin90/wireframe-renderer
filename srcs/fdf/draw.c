@@ -14,6 +14,40 @@
 #include <fdf.h>
 #include <mlx.h>
 
+#define IE "Interlacing: ENABLED"
+#define ID "Interlacing: DISABLED"
+#define AAE "Anti-Aliasing: ENABLED"
+#define AAD "Anti-Aliasing: DISABLED"
+#define HIDDEN_STATS "Stats Hidden... Press 'H' to show."
+#define T0 "Stats"
+#define T1 "-------------------"
+#define T2 "Vertex Count: "
+#define T3 "Line Count: "
+#define T4 "Rotation (in degrees):"
+#define T5 "Increment: "
+#define T6 "Alpha: "
+#define T7 "Beta: "
+#define T8 "Gamma: "
+#define T9 "Key Bindings"
+#define T10 "-------------------"
+#define T11 "Increment++: ']'"
+#define T12 "Increment--: '['"
+#define T13 "Alpha++: Up Arrow"
+#define T14 "Alpha--: Down Arrow"
+#define T15 "Beta++: Left Arrow"
+#define T16 "Beta--: Right Arrow"
+#define T17 "Gamma++: 'E'"
+#define T18 "Gamma--: 'Q'"
+#define T19 "Reset Orientation: 'R'"
+#define T20 "Toggle Anti-Aliasing: 'C'"
+#define T21 "Toggle Interlacing: 'X'"
+#define T22 "Toggle Stats: 'H'"
+#define T23 "Quit: 'esc'"
+#define DI data->increment
+#define DA data->alpha
+#define DAA data->anti_alias
+#define DB data->beta
+#define DG data->gamma
 #define DX data->x_size
 #define DAS data->arr->size
 #define DDI data->display_interlace
@@ -26,11 +60,6 @@
 #define HXF 0xFFFFFF
 #define D20YH DMLXW20, Y15, HXF
 #define D5YH DMLXW5, Y15, HXF
-#define IE "Interlacing: ENABLED"
-#define ID "Interlacing: DISABLED"
-#define AAE "Anti-Aliasing: ENABLED"
-#define AAD "Anti-Aliasing: DISABLED"
-#define HIDDEN_STATS "Stats Hidden... Press 'H' to show."
 #define Y15 y += 15
 #define CFF cache[1] = ft_ftoa
 #define SJ ft_strjoin
@@ -42,9 +71,17 @@
 #define DLFLOATS float hsbvals[3];float dx;float dy;float gradient;float y;
 #define DLINTS int did_swap;int max_x;int start;int x;int color;
 #define DLPARAMS char steep; DLFLOATS DLINTS float b_cache;
+#define DSVAR void *cache[10];int y = -15;
 #define CSJ cache[0] = SJ
-#define MAT cache[1]=ft_itoa((DDI?(DX1*DDX1*4)+DX1+DDX1:(DX1*DDX1*2)+DX1+DDX1)))
+#define MAT cache[1]=ft_itoa((DDI?(DX1*DDX1*4)+DX1+DDX1:(DX1*DDX1*2)+DX1+DDX1))
 #define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
+#define MSP mlx_string_put
+#define MSP1011 MSP(D5YH, T10);MSP(D5YH, T11);
+#define MSP1215 MSP(D5YH, T12);MSP(D5YH, T13);MSP(D5YH, T14);MSP(D5YH, T15);
+#define MSP1619 MSP(D5YH, T16);MSP(D5YH, T17);MSP(D5YH, T18);MSP(D5YH, T19);
+#define MSP2023 MSP(D5YH, T20);MSP(D5YH, T21);MSP(D5YH, T22);MSP(D5YH, T23);
+#define MSP10UP MSP1011 MSP1215 MSP1619 MSP2023
+#define MSPFREE(code) mlx_string_put(code); FREE_CACHE
 
 char	*ft_ftoa(float f)
 {
@@ -56,47 +93,30 @@ char	*ft_ftoa(float f)
 
 void	draw_stats(t_mapdata *data)
 {
-	void	*cache[10];
-	int		y;
-
-	y = -15;
+	DSVAR;
 	if (data->draw_stats)
 	{
-		mlx_string_put(D5YH, "Stats");
-		mlx_string_put(D5YH, "-------------------");
-		mlx_string_put(D5YH, CSJ("Vertex Count: ", cache[1] = ft_itoa(DAS)));
+		MSP(D5YH, T0);
+		MSP(D5YH, T1);
+		MSP(D5YH, CSJ(T2, cache[1] = ft_itoa(DAS)));
 		FREE_CACHE;
-		mlx_string_put(D5YH, CSJ("Line Count: ", MAT);
+		MSP(D5YH, CSJ(T3, MAT));
 		FREE_CACHE;
-		mlx_string_put(D5YH, DDI ? IE : ID);
-		mlx_string_put(D5YH, data->anti_alias ? AAE : AAD);
-		mlx_string_put(D5YH, "Rotation (in degrees):");
-		mlx_string_put(D20YH, CSJ("Increment: ", CFF(data->increment)));
+		MSP(D5YH, DDI ? IE : ID);
+		MSP(D5YH, DAA ? AAE : AAD);
+		MSP(D5YH, T4);
+		MSP(D20YH, CSJ(T5, CFF(DI)));
 		FREE_CACHE;
-		mlx_string_put(D20YH, CSJ("Alpha: ", CFF(data->alpha)));
+		MSP(D20YH, CSJ(T6, CFF(DA)));
 		FREE_CACHE;
-		mlx_string_put(D20YH, CSJ("Beta: ", CFF(data->beta)));
+		MSP(D20YH, CSJ(T7, CFF(DB)));
 		FREE_CACHE;
-		mlx_string_put(D20YH, CSJ("Gamma: ", CFF(data->gamma)));
-		FREE_CACHE;
-		mlx_string_put(DMLXW5, y += 35, HXF, "Key Bindings");
-		mlx_string_put(D5YH, "-------------------");
-		mlx_string_put(D5YH, "Increment++: ']'");
-		mlx_string_put(D5YH, "Increment--: '['");
-		mlx_string_put(D5YH, "Alpha++: Up Arrow");
-		mlx_string_put(D5YH, "Alpha--: Down Arrow");
-		mlx_string_put(D5YH, "Beta++: Left Arrow");
-		mlx_string_put(D5YH, "Beta--: Right Arrow");
-		mlx_string_put(D5YH, "Gamma++: 'E'");
-		mlx_string_put(D5YH, "Gamma--: 'Q'");
-		mlx_string_put(D5YH, "Reset Orientation: 'R'");
-		mlx_string_put(D5YH, "Toggle Anti-Aliasing: 'C'");
-		mlx_string_put(D5YH, "Toggle Interlacing: 'X'");
-		mlx_string_put(D5YH, "Toggle Stats: 'H'");
-		mlx_string_put(D5YH, "Quit: 'esc'");
+		MSP(D20YH, CSJ(T8, CFF(DG)));
+		MSP(DMLXW5, y += 35, HXF, T9);
+		MSP10UP;
 	}
 	else
-		mlx_string_put(DMLXW5, Y15, 0x515151, HIDDEN_STATS);
+		MSP(DMLXW5, Y15, 0x515151, HIDDEN_STATS);
 }
 
 int		draw_image(t_mapdata *data)
@@ -114,7 +134,7 @@ void	draw_pixel(t_windata *data, int x, int y, int color)
 	*((int *)(data->pixel + ((x + y * SCREENSIZE) * data->bpp))) = color;
 }
 
-void	draw_line(t_mapdata *data, ABCOLOR)
+void	draw_line(t_mapdata *data, ABCOLOR color_b[])
 {
 	DLPARAMS;
 	steep = ABS(b[1] - a[1]) > ABS(b[0] - a[0]);

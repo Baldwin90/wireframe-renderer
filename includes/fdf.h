@@ -50,7 +50,7 @@ typedef struct	s_mapdata
 }				t_mapdata;
 
 #define D t_mapdata
-#define ABCOLOR float a[],float b[],float color_a[],float color_b[]
+#define ABCOLOR float a[],float b[],float color_a[],float
 
 void			data_free(t_mapdata *data);
 float			lerp_angle(float a, float b, float t);
@@ -62,7 +62,7 @@ char			*ft_ftoa(float f);
 void			draw_stats(t_mapdata *data);
 int				draw_image(t_mapdata *data);
 void			draw_pixel(t_windata *data, int x, int y, int color);
-void			draw_line(D *dt, ABCOLOR);
+void			draw_line(D *dt, ABCOLOR color_b[]);
 void			draw_background(t_mapdata *data);
 void			mem_swap(void *a, void *b, size_t size);
 void			draw_fdf(t_mapdata *data);
