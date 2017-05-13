@@ -28,6 +28,16 @@
 #define DW data->window
 #define DSV data_set_value
 #define KCE key_code ==
+#define KC53 if (KCE 53) {data_free(data);exit(1);};
+#define KC126 if (KCE 126) DSV(data, &(DA), DA + DI);
+#define KC125 if (KCE 125) DSV(data, &(DA), DA - DI);
+#define KC123 if (KCE 123) DSV(data, &(DB), DB + DI);
+#define KC124 if (KCE 124) DSV(data, &(DB), DB - DI);
+#define KC12 if (KCE 12) DSV(data, &(DG), DG - DI);
+#define KC14 if (KCE 14) DSV(data, &(DG), DG + DI);
+#define KC15 if (KCE 15) {DI = 4;DSV(data, &(DA), 135);DSV(data, &(DB), 25);DSV(data, &(DG), 0);}
+#define KC4 if (KCE 4) {DD = !DD;draw_image(data);}
+#define KCEX KC53 KC126 KC125 KC123 KC124 KC12 KC14 KC15
 #define FS FREE_SPLITS(fields, field_count)
 #define FSFEIII FS; fdf_error(3, line, fd, data)
 #define FSFEIV FS; fdf_error(4, line, fd, data)
@@ -41,26 +51,18 @@
 
 int		key_hook(int key_code, t_mapdata *data)
 {
-	if (KCE 53) {data_free(data);exit(1);}
-	if (KCE 126) DSV(data, &(DA), DA + DI);
-	if (KCE 125) DSV(data, &(DA), DA - DI);
-	if (KCE 123) DSV(data, &(DB), DB + DI);
-	if (KCE 124) DSV(data, &(DB), DB - DI);
-	if (KCE 12) DSV(data, &(DG), DG - DI);
-	if (KCE 14) DSV(data, &(DG), DG + DI);
-	if (KCE 15) {DI = 4;DSV(data, &(DA), 135);DSV(data, &(DB), 25);DSV(data, &(DG), 0);}
-	if (KCE 4) {DD = !DD;draw_image(data);}
-	if (KCE 7)
+	KCEX;
+	if (key_code == 7)
 	{
 		data->display_interlace = !data->display_interlace;
 		draw_fdf(data);
 	}
-	if (KCE 8)
+	if (key_code == 8)
 	{
 		data->anti_alias = !data->anti_alias;
 		draw_fdf(data);
 	}
-	if (KCE 33)
+	if (key_code == 33)
 	{
 		if (DI > 15)
 			DI -= 5;
@@ -72,7 +74,7 @@ int		key_hook(int key_code, t_mapdata *data)
 			DI = 0.1;
 		draw_image(data);
 	}
-	if (KCE 30)
+	if (key_code == 30)
 	{
 		if (DI >= 15)
 			DI += 5;
