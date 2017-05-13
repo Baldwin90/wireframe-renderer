@@ -19,6 +19,7 @@
 #define FHSB float hue; float saturation; float brightness;
 #define FRGBC float redc; float greenc; float bluec;
 #define FHFPQT float h; float f; float p; float q; float t;
+#define I int
 #define IRGB int r = 0; int g = 0; int b = 0;
 #define ICMAXMIN int cmax; int cmin;
 #define RGB r = g = b
@@ -29,6 +30,12 @@
 #define H3RGB (p * F255P5);g = (int)(q * F255P5);b = (int)(brightness * F255P5);
 #define H4RGB (t * F255P5);g = (int)(p * F255P5);b = (int)(brightness * F255P5);
 #define H5RGB (brightness * F255P5);g = (int)(p * F255P5);b = (int)(q * F255P5);
+#define A if ((I)h == 0) {r = (I)H0RGB;} else if ((I)h == 1) {r = (I)H1RGB;}
+#define B else if ((I)h==2) {r = (I)H2RGB;} else if ((I)h == 3) {r = (I)H3RGB;}
+#define C else if ((I)h==4) {r = (I)H4RGB;} else if ((I)h == 5) {r = (I)H5RGB;}
+#define HRGB A B C
+#define RGB2HSB FHSB; FRGBC; ICMAXMIN;
+#define VAL_ARRAY vals[0] = hue; vals[1] = saturation; vals[2] = brightness;
 
 float	lerp_angle(float a, float b, float t)
 {
@@ -101,21 +108,14 @@ int		hsb2rgb(float hsbvals[])
 		p = brightness * (1.0f - saturation);
 		q = brightness * (1.0f - saturation * f);
 		t = brightness * (1.0f - (saturation * (1.0f - f)));
-		if ((int)h == 0) {r = (int)H0RGB;}
-		else if ((int)h == 1) {r = (int)H1RGB;}
-		else if ((int)h == 2) {r = (int)H2RGB;}
-		else if ((int)h == 3) {r = (int)H3RGB;}
-		else if ((int)h == 4) {r = (int)H4RGB;}
-		else if ((int)h == 5) {r = (int)H5RGB;}
+		HRGB;
 	}
 	return ((r << 16) | (g << 8) | (b << 0));
 }
 
 void	rgb2hsb(int r, int g, int b, float *vals)
 {
-	FHSB;
-	FRGBC;
-	ICMAXMIN;
+	RGB2HSB;
 	cmax = (r > g) ? r : g;
 	if (b > cmax)
 		cmax = b;
@@ -141,7 +141,5 @@ void	rgb2hsb(int r, int g, int b, float *vals)
 		if (hue < 0)
 			hue = hue + 1.0f;
 	}
-	vals[0] = hue;
-	vals[1] = saturation;
-	vals[2] = brightness;
+	VAL_ARRAY;
 }
