@@ -239,16 +239,16 @@ void	draw_fdf(t_mapdata *data)
 	while (++idx < arr->size - 1)
 	{
 		if (idx + x_tiles < arr->size)
-			draw_line(data, XY_PNT(idx,idx + x_tiles));
+			draw_line(data, XY_PNT(idx, idx + x_tiles));
 		if (idx % x_tiles != x_tiles - 1)
 		{
 			if (DDI && idx + x_tiles + 1 < arr->size)
-				draw_line(data, XY_PNT(idx,idx + x_tiles + 1));
-			draw_line(data, XY_PNT(idx,idx + 1));
+				draw_line(data, XY_PNT(idx, idx + x_tiles + 1));
+			draw_line(data, XY_PNT(idx, idx + 1));
 		}
 		if (idx % x_tiles != 0)
 			if (DDI && idx + x_tiles - 1 < arr->size)
-				draw_line(data, XY_PNT(idx,idx + x_tiles - 1));
+				draw_line(data, XY_PNT(idx, idx + x_tiles - 1));
 	}
 	draw_image(data);
 }
