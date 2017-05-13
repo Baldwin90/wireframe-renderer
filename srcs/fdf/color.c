@@ -34,7 +34,8 @@
 #define B else if ((I)h==2) {r = (I)H2RGB;} else if ((I)h == 3) {r = (I)H3RGB;}
 #define C else if ((I)h==4) {r = (I)H4RGB;} else if ((I)h == 5) {r = (I)H5RGB;}
 #define HRGB A B C
-#define RGB2HSB FHSB; FRGBC; ICMAXMIN;
+#define CMINMAX cmax = (r > g) ? r : g;cmin = (r < g) ? r : g;
+#define RGB2HSB FHSB; FRGBC; ICMAXMIN; CMINMAX;
 #define VAL_ARRAY vals[0] = hue; vals[1] = saturation; vals[2] = brightness;
 
 float	lerp_angle(float a, float b, float t)
@@ -116,10 +117,8 @@ int		hsb2rgb(float hsbvals[])
 void	rgb2hsb(int r, int g, int b, float *vals)
 {
 	RGB2HSB;
-	cmax = (r > g) ? r : g;
 	if (b > cmax)
 		cmax = b;
-	cmin = (r < g) ? r : g;
 	if (b < cmin)
 		cmin = b;
 	brightness = ((float)cmax) / 255.0f;
