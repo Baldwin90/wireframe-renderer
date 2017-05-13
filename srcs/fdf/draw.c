@@ -103,9 +103,9 @@ void	draw_line(t_mapdata *data, float a[], float b[], float color_a[], float col
 
 	for (int x = start; x < max_x; x++) {
 		if (did_swap) {
-			HSBLerp(color_b, color_a, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
+			hsb_lerp(color_b, color_a, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
 		} else {
-			HSBLerp(color_a, color_b, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
+			hsb_lerp(color_a, color_b, (float)(x - start) / (float) (max_x - start - 1), &(hsbvals[0]));
 		}
 		float b_cache = hsbvals[2];
 		int color;

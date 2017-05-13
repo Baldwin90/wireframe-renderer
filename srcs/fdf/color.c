@@ -37,7 +37,7 @@ float	lerp(float a, float b, float t)
 	return (a + (b - a) * (t - (int)t));
 }
 
-void	HSBLerp(float a[], float b[], float t, float *vals)
+void	hsb_lerp(float a[], float b[], float t, float *vals)
 {
 	FHSA;
 	if (a[2] == 0)
