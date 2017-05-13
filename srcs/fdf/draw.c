@@ -43,16 +43,18 @@
 #define T21 "Toggle Interlacing: 'X'"
 #define T22 "Toggle Stats: 'H'"
 #define T23 "Quit: 'esc'"
+#define AS arr->size
 #define DI data->increment
 #define DA data->alpha
 #define DAA data->anti_alias
 #define DB data->beta
 #define DG data->gamma
 #define DX data->x_size
-#define DAS data->arr->size
+#define DAS data->AS
 #define DDI data->display_interlace
 #define DX1 (DX - 1)
 #define DDX1 (DAS / DX - 1)
+#define DW data->window
 #define DWW data->window->win
 #define DWMLX data->window->mlx
 #define DMLXW5 DWMLX, DWW, 5
@@ -71,16 +73,16 @@
 #define PSY point->screen_y
 #define PSXMM if (PSX > x_max) x_max = PSX;if (PSX < x_min) x_min = PSX;
 #define PSYMM if (PSY > y_max) y_max = PSY;if (PSY < y_min) y_min = PSY;
-#define WHPS while (++idx < arr->size) {point = arr->data[idx]; PSXMM; PSYMM;}
+#define WHPS while (++idx < AS) {point = arr->data[idx]; PSXMM; PSYMM;}
 #define FXYSCALEOFFSETMINMAX F FXMINMAX FYMINMAX IDXXTILE; arr = data->arr; WHPS
 #define DLFLOATS float hsb[3];float dx;float dy;float gradient;float y;
-#define DLINTS int did_swap;int max_x;int start;int x;int color;
+#define DLINTS int did_swap = 0;int max_x;int start;int x;int color;
 #define DLPARAMS char steep; DLFLOATS DLINTS float b_cache;
 #define DSVAR void *cache[10];int y = -15;
 #define CSJ cache[0] = SJ
 #define MAT cache[1]=ft_itoa((DDI?(DX1*DDX1*4)+DX1+DDX1:(DX1*DDX1*2)+DX1+DDX1))
 #define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
-#define FXS (float)(x - start)
+#define FXS (float)(x - start) / (float)(max_x - start - 1)
 #define MSP mlx_string_put
 #define MSP1011 MSP(D5YH, T10);MSP(D5YH, T11);
 #define MSP1215 MSP(D5YH, T12);MSP(D5YH, T13);MSP(D5YH, T14);MSP(D5YH, T15);
@@ -93,6 +95,15 @@
 #define PNT_Y(idx) ((PNT(idx)->screen_y - y_min) * scale) + y_offset
 #define PNT_XY(idx) (float[]){PNT_X(idx), PNT_Y(idx)}
 #define XY_PNT(i0,i1) PNT_XY(i0), PNT_XY(i1), PNT(i0)->hsb, PNT(i1)->hsb
+#define MS mem_swap
+#define ISTEEP if(steep){MS(a,a + 1, sizeof(*a));MS(b, b + 1, sizeof(*a));}
+#define IAB if (a[0] > b[0]){MS(a, b, 2 * sizeof(float));did_swap = 1;};
+#define DXDY dx =(b[0]-a[0])*SCREENSIZE;dy=ABS((b[1] - a[1])) * SCREENSIZE;
+#define IMEMSWAPDXDY ISTEEP IAB DXDY
+#define IDP if(steep){draw_pixel(DW,y,x,color);}else{draw_pixel(DW,x,y,color);}
+#define IDPYGX color = hsb2rgb(hsb); IDP;y += gradient; x++;
+#define FXDHB FXS,&(hsb[0])
+#define WHILEDS if(did_swap){hsb_lerp(cb,ca,FXDHB);}else{hsb_lerp(ca,cb,FXDHB);}
 
 char	*ft_ftoa(float f)
 {
@@ -149,19 +160,7 @@ void	draw_line(t_mapdata *data, ABCOLOR cb[])
 {
 	DLPARAMS;
 	steep = ABS(b[1] - a[1]) > ABS(b[0] - a[0]);
-	did_swap = 0;
-	if (steep)
-	{
-		mem_swap(a, a + 1, sizeof(*a));
-		mem_swap(b, b + 1, sizeof(*a));
-	}
-	if (a[0] > b[0])
-	{
-		mem_swap(a, b, 2 * sizeof(float));
-		did_swap = 1;
-	}
-	dx = (b[0] - a[0]) * SCREENSIZE;
-	dy = ABS((b[1] - a[1])) * SCREENSIZE;
+	IMEMSWAPDXDY;
 	gradient = dy / dx * (a[1] < b[1] ? 1 : -1);
 	y = (a[1] * SCREENSIZE);
 	max_x = (int)(b[0] * SCREENSIZE);
@@ -169,28 +168,19 @@ void	draw_line(t_mapdata *data, ABCOLOR cb[])
 	x = start;
 	while (x < max_x)
 	{
-		if (did_swap)
-			hsb_lerp(cb, ca, FXS / (float)(max_x - start - 1), &(hsb[0]));
-		else
-			hsb_lerp(ca, cb, FXS / (float)(max_x - start - 1), &(hsb[0]));
+		WHILEDS;
 		b_cache = hsb[2];
 		if (data->anti_alias)
 		{
 			hsb[2] = lerp(0, b_cache, y - (int)y);
 			color = hsb2rgb(hsb);
 			if (steep)
-				draw_pixel(data->window, y + 1, x, color);
+				draw_pixel(DW, y + 1, x, color);
 			else
-				draw_pixel(data->window, x, y + 1, color);
+				draw_pixel(DW, x, y + 1, color);
 			hsb[2] = lerp(0, b_cache, 1 - (y - (int)y));
 		}
-		color = hsb2rgb(hsb);
-		if (steep)
-			draw_pixel(data->window, y, x, color);
-		else
-			draw_pixel(data->window, x, y, color);
-		y += gradient;
-		x++;
+		IDPYGX;
 	}
 }
 
@@ -236,18 +226,18 @@ void	draw_fdf(t_mapdata *data)
 	draw_background(data);
 	x_tiles = DX;
 	idx = -1;
-	while (++idx < arr->size - 1)
+	while (++idx < AS - 1)
 	{
-		if (idx + x_tiles < arr->size)
+		if (idx + x_tiles < AS)
 			draw_line(data, XY_PNT(idx, idx + x_tiles));
 		if (idx % x_tiles != x_tiles - 1)
 		{
-			if (DDI && idx + x_tiles + 1 < arr->size)
+			if (DDI && idx + x_tiles + 1 < AS)
 				draw_line(data, XY_PNT(idx, idx + x_tiles + 1));
 			draw_line(data, XY_PNT(idx, idx + 1));
 		}
 		if (idx % x_tiles != 0)
-			if (DDI && idx + x_tiles - 1 < arr->size)
+			if (DDI && idx + x_tiles - 1 < AS)
 				draw_line(data, XY_PNT(idx, idx + x_tiles - 1));
 	}
 	draw_image(data);
