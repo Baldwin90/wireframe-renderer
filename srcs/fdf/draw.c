@@ -106,10 +106,19 @@ void	draw_line(t_mapdata *data, ABCOLOR)
 {
 	float	hsbvals[3];
 	char	steep;
+	int did_swap;
+	float dx;
+	float dy;
+	float gradient;
+	float y;
+	int max_x;
+	int start;
+	int x;
 
 	steep = ABS(b[1] - a[1]) > ABS(b[0] - a[0]);
-	int did_swap = 0;
-	if (steep) 	{
+	did_swap = 0;
+	if (steep)
+	{
 		mem_swap(a, a + 1, sizeof(*a));
 		mem_swap(b, b + 1, sizeof(*a));
 	}
@@ -117,15 +126,14 @@ void	draw_line(t_mapdata *data, ABCOLOR)
 		mem_swap(a, b, 2 * sizeof(float));
 		did_swap = 1;
 	}
-	float dx = (b[0] - a[0]) * SCREENSIZE;
-	float dy = ABS((b[1] - a[1])) * SCREENSIZE;
-	float gradient = dy / dx * (a[1] < b[1] ? 1 : -1);
-	float y = (a[1] * SCREENSIZE);
-
-	int max_x = (int)(b[0] * SCREENSIZE);
-	int start = (int)(a[0] * SCREENSIZE);
-
-	for (int x = start; x < max_x; x++)
+	dx = (b[0] - a[0]) * SCREENSIZE;
+	dy = ABS((b[1] - a[1])) * SCREENSIZE;
+	gradient = dy / dx * (a[1] < b[1] ? 1 : -1);
+	y = (a[1] * SCREENSIZE);
+	max_x = (int)(b[0] * SCREENSIZE);
+	start = (int)(a[0] * SCREENSIZE);
+	x = start;
+	while (x < max_x)
 	{
 		if (did_swap)
 		{
@@ -162,14 +170,19 @@ void	draw_line(t_mapdata *data, ABCOLOR)
 		}
 
 		y += gradient;
+		x++;
 	}
 }
 
 void	draw_background(t_mapdata *data)
 {
-	for (int i = 0; i < SCREENSIZE * SCREENSIZE; i++)
+	int	i;
+
+	i = 0;
+	while (i < SCREENSIZE * SCREENSIZE)
 	{
 		((int *)data->window->pixel)[i] = data->background;
+		i++;
 	}
 }
 
