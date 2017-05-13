@@ -101,30 +101,12 @@ int		hsb2rgb(float hsbvals[])
 		p = brightness * (1.0f - saturation);
 		q = brightness * (1.0f - saturation * f);
 		t = brightness * (1.0f - (saturation * (1.0f - f)));
-		if ((int)h == 0)
-		{
-			r = (int)H0RGB;
-		}
-		else if ((int)h == 1)
-		{
-			r = (int)H1RGB;
-		}
-		else if ((int)h == 2)
-		{
-			r = (int)H2RGB;
-		}
-		else if ((int)h == 3)
-		{
-			r = (int)H3RGB;
-		}
-		else if ((int)h == 4)
-		{
-			r = (int)H4RGB;
-		}
-		else if ((int)h == 5)
-		{
-			r = (int)H5RGB;
-		}
+		if ((int)h == 0) {r = (int)H0RGB;}
+		else if ((int)h == 1) {r = (int)H1RGB;}
+		else if ((int)h == 2) {r = (int)H2RGB;}
+		else if ((int)h == 3) {r = (int)H3RGB;}
+		else if ((int)h == 4) {r = (int)H4RGB;}
+		else if ((int)h == 5) {r = (int)H5RGB;}
 	}
 	return ((r << 16) | (g << 8) | (b << 0));
 }
