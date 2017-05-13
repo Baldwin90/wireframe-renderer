@@ -31,7 +31,8 @@
 #define F float x_scale;float y_scale;float scale;float x_offset;float y_offset;
 #define FXMINMAX float x_min=2147483647; float x_max=-2147483648;
 #define FYMINMAX float y_min=2147483647; float y_max=-2147483648;
-#define FXYSCALEOFFSETMINMAX F FXMINMAX FYMINMAX
+#define IIDXXTILE int idx = 0; int x_tiles; t_point *point;t_arraylist *arr
+#define FXYSCALEOFFSETMINMAX F FXMINMAX FYMINMAX IIDXXTILE
 #define FREE_CACHE for(int i=0;i<10;i++){if(cache[i])free(cache[i]);cache[i]=0;}
 
 char	*ft_ftoa(float f)
@@ -174,43 +175,39 @@ void	draw_background(t_mapdata *data)
 
 void	mem_swap(void *a, void *b, size_t size)
 {
-	char	cache;
-	char	*a_mem;
-	char	*b_mem;
+	char			cache;
+	char			*a_mem;
+	char			*b_mem;
+	unsigned long	i;
 
 	a_mem = a;
 	b_mem = b;
-	for (unsigned long i = 0; i < size; i++)
+	i = 0;
+	while (i < size)
 	{
 		cache = a_mem[i];
 		a_mem[i] = b_mem[i];
 		b_mem[i] = cache;
+		i++;
 	}
 }
 
 void	draw_fdf(t_mapdata *data)
 {
 	FXYSCALEOFFSETMINMAX;
-	t_point *point;
-	t_arraylist *arr = data->arr;
-	for (int idx = 0; idx < arr->size; idx++) 	{
+	arr = data->arr;
+	while (idx < arr->size)
+	{
 		point = arr->data[idx];
 		if (point->screen_x > x_max)
-		{
 			x_max = point->screen_x;
-		}
 		if (point->screen_x < x_min)
-		{
 			x_min = point->screen_x;
-		}
 		if (point->screen_y > y_max)
-		{
 			y_max = point->screen_y;
-		}
 		if (point->screen_y < y_min)
-		{
 			y_min = point->screen_y;
-		}
+		idx++;
 	}
 	x_scale = 1 / (x_max - x_min) * 0.95;
 	y_scale = (1 / (y_max - y_min)) * 0.95;
@@ -218,8 +215,9 @@ void	draw_fdf(t_mapdata *data)
 	x_offset = (1 - ((x_max - x_min) * scale)) * 0.5;
 	y_offset = (1 - ((y_max - y_min) * scale)) * 0.5;
 	draw_background(data);
-	int x_tiles = data->x_size;
-	for (int idx = 0; idx < arr->size - 1; idx++)
+	x_tiles = data->x_size;
+	idx = 0;
+	while (idx < arr->size - 1)
 	{
 		if (idx + x_tiles < arr->size)
 		{
@@ -240,6 +238,7 @@ void	draw_fdf(t_mapdata *data)
 				draw_line(data, (float[]){((((t_point *)arr->data[idx])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx])->screen_y - y_min) * scale) + y_offset}, (float[]){((((t_point *)arr->data[idx + x_tiles - 1])->screen_x - x_min) * scale) + x_offset, ((((t_point *)arr->data[idx + x_tiles - 1])->screen_y - y_min) * scale) + y_offset}, ((t_point *)arr->data[idx])->hsb, ((t_point *)arr->data[idx + x_tiles - 1])->hsb);
 			}
 		}
+		idx++;
 	}
 	draw_image(data);
 }
