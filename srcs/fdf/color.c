@@ -15,6 +15,13 @@
 #include <libft.h>
 #include <fdf.h>
 
+#define FHSA float h;float s;float angle;
+#define FHSB float hue; float saturation; float brightness;
+#define FRGBC float redc; float greenc; float bluec;
+#define FHFPQT float h; float f; float p; float q; float t;
+#define IRGB int r; int g; int b;
+#define CMAXMIN int cmax; int cmin;
+
 float	lerp_angle(float a, float b, float t)
 {
 	float	num;
@@ -32,9 +39,7 @@ float	lerp(float a, float b, float t)
 
 void	HSBLerp(float a[], float b[], float t, float *vals)
 {
-	float	h;
-	float	s;
-
+	FHSA;
 	if (a[2] == 0)
 	{
 		h = b[0];
@@ -57,7 +62,7 @@ void	HSBLerp(float a[], float b[], float t, float *vals)
 		}
 		else
 		{
-			float angle = lerp_angle(a[0] * 360.0f, b[0] * 360.0f, t);
+			angle = lerp_angle(a[0] * 360.0f, b[0] * 360.0f, t);
 			while (angle < 0.0f)
 				angle += 360.0f;
 			while (angle > 360.0f)
@@ -73,19 +78,26 @@ void	HSBLerp(float a[], float b[], float t, float *vals)
 
 int		HSBtoRGB(float hsbvals[])
 {
-	float hue = hsbvals[0], saturation=hsbvals[1], brightness=hsbvals[2];
-	int r = 0, g = 0, b = 0;
+	FHSB;
+	IRGB;
+	FHFPQT;
+	hue = hsbvals[0];
+	saturation = hsbvals[1];
+	brightness = hsbvals[2];
+	r = 0;
+	g = 0;
+	b = 0;
 	if (saturation == 0)
 	{
 		r = g = b = (int)(brightness * 255.0f + 0.5f);
 	}
 	else
 	{
-		float h = (hue - (float)floor(hue)) * 6.0f;
-		float f = h - (float)floor(h);
-		float p = brightness * (1.0f - saturation);
-		float q = brightness * (1.0f - saturation * f);
-		float t = brightness * (1.0f - (saturation * (1.0f - f)));
+		h = (hue - (float)floor(hue)) * 6.0f;
+		f = h - (float)floor(h);
+		p = brightness * (1.0f - saturation);
+		q = brightness * (1.0f - saturation * f);
+		t = brightness * (1.0f - (saturation * (1.0f - f)));
 		switch ((int)h)
 		{
 		case 0:
@@ -125,10 +137,12 @@ int		HSBtoRGB(float hsbvals[])
 
 void	RGBtoHSB(int r, int g, int b, float *vals)
 {
-	float hue, saturation, brightness;
-	int cmax = (r > g) ? r : g;
+	FHSB;
+	FRGBC;
+	CMAXMIN;
+	cmax = (r > g) ? r : g;
 	if (b > cmax) cmax = b;
-	int cmin = (r < g) ? r : g;
+	cmin = (r < g) ? r : g;
 	if (b < cmin) cmin = b;
 
 	brightness = ((float)cmax) / 255.0f;
@@ -139,9 +153,9 @@ void	RGBtoHSB(int r, int g, int b, float *vals)
 	if (saturation == 0)
 		hue = 0;
 	else {
-		float redc = ((float)(cmax - r)) / ((float)(cmax - cmin));
-		float greenc = ((float)(cmax - g)) / ((float)(cmax - cmin));
-		float bluec = ((float)(cmax - b)) / ((float)(cmax - cmin));
+		redc = ((float)(cmax - r)) / ((float)(cmax - cmin));
+		greenc = ((float)(cmax - g)) / ((float)(cmax - cmin));
+		bluec = ((float)(cmax - b)) / ((float)(cmax - cmin));
 		if (r == cmax)
 			hue = bluec - greenc;
 		else if (g == cmax)
