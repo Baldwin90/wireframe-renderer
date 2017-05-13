@@ -23,6 +23,12 @@
 #define ICMAXMIN int cmax; int cmin;
 #define RGB r = g = b
 #define F255P5 255.0f + 0.5f
+#define H0RGB (brightness * F255P5);g = (int)(t * F255P5);b = (int)(p * F255P5);
+#define H1RGB (q * F255P5);g = (int)(brightness * F255P5);b = (int)(p * F255P5);
+#define H2RGB (p * F255P5);g = (int)(brightness * F255P5);b = (int)(t * F255P5);
+#define H3RGB (p * F255P5);g = (int)(q * F255P5);b = (int)(brightness * F255P5);
+#define H4RGB (t * F255P5);g = (int)(p * F255P5);b = (int)(brightness * F255P5);
+#define H5RGB (brightness * F255P5);g = (int)(p * F255P5);b = (int)(q * F255P5);
 
 float	lerp_angle(float a, float b, float t)
 {
@@ -97,39 +103,27 @@ int		hsb2rgb(float hsbvals[])
 		t = brightness * (1.0f - (saturation * (1.0f - f)));
 		if ((int)h == 0)
 		{
-			r = (int)(brightness * F255P5);
-			g = (int)(t * F255P5);
-			b = (int)(p * F255P5);
+			r = (int)H0RGB;
 		}
 		else if ((int)h == 1)
 		{
-			r = (int)(q * F255P5);
-			g = (int)(brightness * F255P5);
-			b = (int)(p * F255P5);
+			r = (int)H1RGB;
 		}
 		else if ((int)h == 2)
 		{
-			r = (int)(p * F255P5);
-			g = (int)(brightness * F255P5);
-			b = (int)(t * F255P5);
+			r = (int)H2RGB;
 		}
 		else if ((int)h == 3)
 		{
-			r = (int)(p * F255P5);
-			g = (int)(q * F255P5);
-			b = (int)(brightness * F255P5);
+			r = (int)H3RGB;
 		}
 		else if ((int)h == 4)
 		{
-			r = (int)(t * F255P5);
-			g = (int)(p * F255P5);
-			b = (int)(brightness * F255P5);
+			r = (int)H4RGB;
 		}
 		else if ((int)h == 5)
 		{
-			r = (int)(brightness * F255P5);
-			g = (int)(p * F255P5);
-			b = (int)(q * F255P5);
+			r = (int)H5RGB;
 		}
 	}
 	return ((r << 16) | (g << 8) | (b << 0));
